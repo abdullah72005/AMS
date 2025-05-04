@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `Donation` (
     CHECK (`amount` > 0),
   CONSTRAINT `fk_donation_donor`
     FOREIGN KEY (`donor_id`) REFERENCES `Alumni`(`userId`)
-      ON DELETE SET NULL
+      ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- 10. Newsletter
@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `Newsletter` (
   `publishedState` BOOLEAN DEFAULT FALSE,
   CONSTRAINT `fk_newsletter_creator`
     FOREIGN KEY (`creatorId`) REFERENCES `FacultyStaff`(`user_id`)
-      ON DELETE SET NULL
+      ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- 11. Notification
