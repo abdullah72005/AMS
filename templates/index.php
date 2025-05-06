@@ -1,6 +1,5 @@
 <?php
-$title = 'Home';
-$childView = 'views/home_content.php';
-$titleView = 'fuck you';
+$childView = 'views/index-view.php';
+$titleView = 'ahmed hassan';
 include('layout.php');
 ?>
