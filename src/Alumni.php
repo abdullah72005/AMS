@@ -1,6 +1,6 @@
 <?php   
 require_once 'User.php';
-require_once __DIR__ . '/Donation.php';
+require_once 'Donation.php';
 class Alumni extends User
 {
     private $mentorStatus; 
