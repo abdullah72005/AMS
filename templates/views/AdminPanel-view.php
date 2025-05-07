@@ -1,18 +1,18 @@
 <?php
+require_once("../src/User.php");
 require_once("../src/Admin.php");
+
+
 
 $errorMsg = "";
 $successMsg = "";
 $userData = null;
 
-try {
-    $admin = new Admin();
-} catch (Exception $e) {
-    die("Access denied: " . $e->getMessage());
-}
+
  
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
+        $admin = new Admin($_SESSION['username']);
         if (isset($_POST['addUser'])) {
             $admin->createUser($_POST['username'], $_POST['password'], $_POST['role']);
             $successMsg = "User added successfully!";

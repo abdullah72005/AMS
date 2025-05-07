@@ -1,17 +1,40 @@
 <?php
 
-class AlumniSignupForEvent {
-    private int $alumniId;
+require_once('User.php');
 
-    public function __construct(int $alumniId) {
-        $this->alumniId = $alumniId;
+
+class Alumni extends User
+{
+
+    public function __construct($username)
+    {
+        parent::__construct($username);
     }
 
-    public function signupForEvent(int $eventId, array &$events): void {
-        if (isset($events[$eventId])) {
-            $events[$eventId]->addParticipant($this->alumniId);
-        } else {
-            echo "Event not found.\n";
-        }
-    }
+    
 }
+
+
+
+
+
+
+
+
+// class AlumniSignupForEvent {
+//     private int $alumniId;
+
+//     public function __construct(int $alumniId) {
+//         $this->alumniId = $alumniId;
+//     }
+
+//     public function signupForEvent(int $eventId, array &$events): void {
+//         if (isset($events[$eventId])) {
+//             $events[$eventId]->addParticipant($this->alumniId);
+//         } else {
+//             echo "Event not found.\n";
+//         }
+//     }
+// }
+
+

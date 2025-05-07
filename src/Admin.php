@@ -1,23 +1,13 @@
 <?php
 
-class Admin
+require_once('User.php');
+
+
+class Admin extends User
 {
-    private $dbCnx;
-
-    public function __construct()
+    public function __construct($username)
     {
-        // Ensure session is started
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        // Verify admin privileges
-        if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
-            throw new Exception("Unauthorized access. Admin privileges required.");
-        }
-
-        // Initialize database connection
-        $this->dbCnx = require('db.php');
+        parent::__construct($username);
     }
 
     public function createUser($username, $password, $role)
