@@ -60,7 +60,6 @@ abstract class User
         $this->userId = $this->dbCnx->lastInsertId();
 
         // log user in
-        $this->login_user($password);
         
         return $this->userId;
     }
