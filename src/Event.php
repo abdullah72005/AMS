@@ -1,23 +1,31 @@
 <?php
 
+
+
 class Event {
     private int $eventId;
     private string $name;
     private string $description;
     private DateTime $date;
     private int $creatorId;
-    private array $participantsId;
+    private $dbCnx;
 
-    // Constructs a new Event instance.
-    public function __construct(int $eventId, string $name, string $description, DateTime $date, int $creatorId) {
+    public function __construct(int $eventId, string $name, string $description, DateTime $date) {
         $this->eventId = $eventId;
         $this->name = $name;
         $this->description = $description;
         $this->date = $date;
-        $this->creatorId = $creatorId;
-        $this->participantsId = [];
+        $this->dbCnx=require("db.php");
     }
-//getters
+
+    public function addEvent($creatorId){
+        $this->creatorId=$creatorId;
+        $stmt = $this->dbCnx->prepare("INSERT INTO events (name, description, date, creatorId) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$this->name, $this->description, $this->date->format('d-m-y H:i:s'), $this->creatorId]);
+        $this->eventId = (int)$this->dbCnx->lastInsertId();
+        return $this->eventId;
+    }
+
     public function getEventId(): int {
         return $this->eventId;
     }
@@ -33,10 +41,11 @@ class Event {
     public function getMadeBy(): string {
         return (string)$this->creatorId;
     }
-//setters
+
     private function setEventId(int $eventId): void {
         $this->eventId = $eventId;
     }
+
     public function setDate(DateTime $date): void {
         $this->date = $date;
     }
@@ -52,13 +61,35 @@ class Event {
     public function setCreator(string $creator): void {
         $this->creatorId = (int)$creator;
     }
-// Adds a participant to the event.
-    public function addParticipant(int $participantId): void {
-        $this->participantsId[] = $participantId;
+
+  
+
+    public static function Edit(int $eventId, string $newData): void {
+        $stmt = $this->dbCnx->prepare("UPDATE events SET name = ?, description = ?, date = ? WHERE event_id = ?");
+        $stmt->execute([$newData, $newData, (new DateTime($newData))->format('Y-m-d H:i:s'), $eventId]);
     }
-//gets the participants of the event.
-    public function getParticipants(): array {
-        return $this->participantsId;
+
+    public static function delete(int $eventId): void {
+        $stmt = $this->dbCnx->prepare("DELETE FROM events WHERE event_id = ?");
+        $stmt->execute([$eventId]);
+    }
+
+    public static function getEventsByCreator(int $creatorId): array {
+    
+        $stmt = $this->dbCnx->prepare("SELECT event_id FROM events WHERE creator_id = ?");
+        $stmt->execute([$creatorId]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    public static function getParticipants(int $eventId): array {
+        $stmt = $this->dbCnx->prepare("SELECT alumni_id FROM participants WHERE event_id = ?");
+        $stmt->execute([$eventId]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    public static function addParticipant(int $eventId, int $alumniId): void {
+        $stmt = $this->dbCnx->prepare("INSERT INTO participants (event_id, alumni_id) VALUES (?, ?)");
+        $stmt->execute([$eventId, $alumniId]);
     }
 }
 
