@@ -6,19 +6,18 @@ class Donation
     private $amount;
     private $date;
     private $cause;
-    private $dbCnx;
     public function __construct($donorId, $amount, $cause)
     {
         $this->donorId = $donorId;
         $this->amount = $amount;
         $this->date = date('Y-m-d H:i:s');
         $this->cause = $cause;
-        $this->dbCnx = require('db.php');
     }
     public function donate()
     {
+        $dbCnx = require('db.php');
         try {
-            $stmt = $this->dbCnx->prepare("INSERT INTO donation (donor_id, amount, DATE, cause) VALUES (:user_id, :amount,:DATE, :cause)");
+            $stmt = $dbCnx->prepare("INSERT INTO donation (donor_id, amount, DATE, cause) VALUES (:user_id, :amount,:DATE, :cause)");
             $stmt->bindValue(':DATE', $this->date);
             $stmt->bindParam(':user_id', $this->donorId);
             $stmt->bindParam(':amount', $this->amount);

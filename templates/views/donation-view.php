@@ -1,12 +1,13 @@
 <?php 
-
+require_once("../src/Alumni.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $amount = $_POST['amount'];
     $cause = $_POST['cause'];
-    $user = $_SESSION['user'];
-    echo $user->getId();
-    echo $user->getUsername();
+    $id = $_SESSION['user_id'];
+    $username = $_SESSION['username'];
+    $user = new Alumni($username);
+    echo $user->makeDonation($id,$amount , $cause);
 }else if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Alumni'){        
     echo "You are not allowed to make a donation.";
     exit;} {?>
