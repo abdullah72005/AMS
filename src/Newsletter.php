@@ -1,4 +1,5 @@
-<?php class Newsletter
+<?php 
+class Newsletter
 {
     private $id;
     private $title;
@@ -41,6 +42,14 @@
     {
         $this->state->publish($this);
     }
+    protected function setBody($body)
+    {
+        $this->body = $body;
+    }
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
 }
 
 
@@ -65,9 +74,9 @@ class DraftState implements State
         // Code to edit the newsletter in draft state
         echo "Editing newsletter in draft state.\n";
         if ($field == 'title') {
-            $newsletter->title = $data;
+            $newsletter->setTitle($data);
         } elseif ($field == 'body') {
-            $newsletter->body = $data;
+            $newsletter->setBody($data);
         } else {
             echo "Invalid field to edit.\n";
         }
