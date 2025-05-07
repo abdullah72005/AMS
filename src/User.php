@@ -150,9 +150,9 @@ abstract class User
         return true;
     }
 
-    static public function getRole($Username)
+    static public function getRole($username)
     {
-        if (empty($Username) || !is_string($Username)) {
+        if (empty($username) || !is_string($username)) {
             throw new InvalidArgumentException("Username must be a non-empty string.");
         }
     
@@ -161,7 +161,7 @@ abstract class User
     
         // Prepare and execute query
         $stmt = $dbCnx->prepare("SELECT role FROM User WHERE username = ?");
-        $stmt->execute([$Username]);
+        $stmt->execute([$username]);
 
         // Fetch result
         $role = $stmt->fetchColumn();
