@@ -1,5 +1,5 @@
 <?php
-$childView = 'views/donation_content.php';
+$childView = 'views/donation-view.php';
 $titleView = 'donate';
-include('layout.php');
+include_once('layout.php');
 ?>

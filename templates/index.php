@@ -1,5 +1,5 @@
 <?php
 $childView = 'views/index-view.php';
 $titleView = 'ahmed hassan';
-include('layout.php');
+include_once('layout.php');
 ?>

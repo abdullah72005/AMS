@@ -1,14 +1,13 @@
-<?php require_once("../src/Alumni.php");
+<?php 
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $amount = $_POST['amount'];
     $cause = $_POST['cause'];
-    $user = new Alumni($_SESSION['username']);
-    $user->login_user(1234);
-    echo $user->makeDonation($amount, $cause);
-
-}else if (isset($_SESSION)){        
+    $user = $_SESSION['user'];
+    echo $user->getId();
+    echo $user->getUsername();
+}else if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Alumni'){        
     echo "You are not allowed to make a donation.";
     exit;} {?>
 <div class="container mt-5">
@@ -19,10 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 <div class="mb-3">
                     <label for="username" class="form-label">donation amount</label>
                     <input 
-                        type="text" 
+                        type="number" 
                         class="form-control" 
-                        id="username" 
-                        name="username" 
+                        id="amount" 
+                        name="amount" 
                         required
                     >
                 </div>
@@ -30,10 +29,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 <div class="mb-3">
                     <label for="pass" class="form-label">donation cause</label>
                     <input 
-                        type="password" 
+                        type="text" 
                         class="form-control" 
-                        id="pass" 
-                        name="pass" 
+                        id="cause" 
+                        name="cause" 
                         required
                     >
                 </div>
