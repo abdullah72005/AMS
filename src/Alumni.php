@@ -1,34 +1,27 @@
-<?php 
-class alumni 
+<?php   
+require_once 'User.php';
+require_once 'Donation.php';
+class alumni extends User
 {   
     private $donations = [];
-    private $id;
-    private $pdo;
-    public function __construct($id){
-        $this->id = $id;
-        $this->pdo = require('db.php');
+    public function __construct($username){
+        parent::__construct($username);
     }
+
     public function makeDonation($amount, $cause)
-    {
-        try {
-            $stmt = $this->pdo->prepare("INSERT INTO donation (donor_id, amount, DATE, cause) VALUES (:user_id, :amount,:DATE, :cause)");
-            $stmt->bindValue(':DATE', date('Y-m-d H:i:s'));
-            $stmt->bindParam(':user_id', $this->id);
-            $stmt->bindParam(':amount', $amount);
-            $stmt->bindParam(':cause', $cause);
-            $stmt->execute();
-            return "Donation of $amount for $cause has been made successfully. on " . date('Y-m-d H:i:s');
-        } catch (Exception $e) {
-            return "Failed to make donation: " . $e->getMessage();
-        }
+    { 
+        $donation = new Donation($this->getId(), $amount, $cause);
+        $donation->donate();
     }
+
     public function getDonations()
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM donations WHERE user_id = :user_id");
-        $stmt->bindParam(':user_id', $this->id);
+        $stmt = $this->dbCnx->prepare("SELECT * FROM donations WHERE user_id = :user_id");
+        $stmt->bindParam(':user_id', $this->getId());
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
 }
 
 ?>
