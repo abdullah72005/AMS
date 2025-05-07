@@ -5,12 +5,24 @@ require_once('User.php');
 
 class Alumni extends User
 {
+    private $mentorStatus; 
+    private $verfied;
 
     public function __construct($username)
     {
         parent::__construct($username);
+        $mentorStatus = false;
+        $verfied = false;
     }
-
+    public function serveAsMentor($verfied, $mentor)
+    {
+        
+    }
+    public function updateMentorStatus($newMentorStatus)
+    {
+        this->$verfied = true;
+    }
+    
     
 }
 

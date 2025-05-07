@@ -11,6 +11,10 @@ class Student extends User
         parent::__construct($username);
     }
 
-    
+    public function selectMentor($mentor)
+    {
+
+    }
+
 }
 ?>
