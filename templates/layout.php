@@ -1,4 +1,18 @@
-<?php session_start(); 
+<?php 
+session_start(); 
+// Get current page filename
+$current_page = basename($_SERVER['PHP_SELF']);
+
+// Pages that don't require authentication
+$excluded_pages = ['login.php', 'register.php'];
+
+// Only check session if not on excluded pages
+if (!in_array($current_page, $excluded_pages)) {
+    if (!isset($_SESSION['username'])) {
+        header('Location: login.php');
+        exit();
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
