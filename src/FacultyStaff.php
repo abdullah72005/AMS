@@ -11,7 +11,21 @@ class FacultyStaff extends User
         parent::__construct($username);
     }
 
-    
+           public function register_user($password, $role)
+    {
+        try {
+            $id = parent::register_user($password, $role); 
+            $stmt = $this->dbCnx->prepare("INSERT INTO FacultyStaff (user_id) VALUES (:user_id)");
+            $stmt->bindParam(':user_id', $id);
+            $stmt->execute();
+            $this->login_user($password); // Log in the user after registration
+            return $id;
+        }
+        catch (Exception $e) {
+            return "Failed to register alumni: " . $e->getMessage();
+        }
+
+    }
 }
 
 
