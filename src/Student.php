@@ -35,7 +35,6 @@ class Student extends User
         catch (Exception $e) {
             return "Failed to register alumni: " . $e->getMessage();
         }
-
     }
 }
 ?>
