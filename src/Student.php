@@ -5,7 +5,7 @@ require_once('User.php');
 
 class Student extends User
 {
-    private $major;
+    private $major; 
     public function __construct($username)
     {
         parent::__construct($username);
