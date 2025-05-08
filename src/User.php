@@ -103,7 +103,7 @@ abstract class User
         $_SESSION['username'] = $user['username'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['loggedin'] = true;
-
+        $_SESSION['user'] = serialize($this);
         $this->userId = $user['user_id'];
         $this->username = $user['username'];
         $this->password = $password;

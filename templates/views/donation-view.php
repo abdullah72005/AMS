@@ -1,6 +1,5 @@
 <?php 
 require_once("../src/Alumni.php");
-
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $amount = $_POST['amount'];
     $cause = $_POST['cause'];
@@ -10,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     echo $user->makeDonation($id,$amount , $cause);
 }else if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Alumni'){        
     echo "You are not allowed to make a donation.";
-    exit;} {?>
+    exit;} else {?>
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -45,4 +44,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         </div>
     </div>
 </div>
-<?php }?>
+<?php } ?>
+<?php if (!empty($allUsers)): ?>
+                        <div class="mt-4">
+                            <h5>All Users (<?= count($allUsers) ?>)</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Username</th>
+                                            <th>Role</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($allUsers as $user): ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars($user['user_id']) ?></td>
+                                                <td><?= htmlspecialchars($user['username']) ?></td>
+                                                <td><?= htmlspecialchars($user['role']) ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+<?php ?>
