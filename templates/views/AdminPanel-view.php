@@ -1,8 +1,5 @@
 <?php
-require_once("../src/User.php");
-require_once("../src/Admin.php");
 
-session_start();
 
 $errorMsg = "";
 $successMsg = "";

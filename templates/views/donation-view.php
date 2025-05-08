@@ -1,10 +1,4 @@
 <?php 
-require_once("../src/User.php");
-require_once("../src/Alumni.php");
-
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $amount = $_POST['amount'];
@@ -12,10 +6,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $user = $_SESSION['userObj'];
     $id = $user->getId();
     $username = $user->getUsername();
-    echo $user->makeDonation($id, $amount , $cause);
+    $user->makeDonation($id, $amount , $cause);
 }
-else if (!isset($username) || User::getRole($username) != 'Alumni'){        
-    echo "You are not allowed to make a donation.    " . $user;
+else if (!isset($_SESSION['loggedin']) || User::getRole($_SESSION['username']) != 'Alumni'){        
+    echo "You are not allowed to make a donation.    ";
     exit;} 
 else {
     ?>
