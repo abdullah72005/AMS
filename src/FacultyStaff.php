@@ -5,29 +5,67 @@ require_once 'User.php';
 
 class FacultyStaff extends User{
 
-    public function scheduleEvent(string $title, string $description, DateTime $date): int {
-        $event = new Event(0, $title, $description, $date);
-        $creatorId=$this->getId();
-        $event->addEvent(creatorId);
-        return $event->save();
-
+    public function scheduleEvent(string $name, string $description, DateTime $date): int {
+        // check if event exists with this name
+        $stmt = $this->dbCnx->prepare("SELECT eventId FROM `Event` WHERE name = ?");
+        $stmt->execute([$name]);
+        $eventId = $stmt->fetchColumn();
+        if ($eventId) {
+            throw new Exception("Event with this name already exists.");
+        }
+        // check if event date is in the past
+        $currentDate = new DateTime();
+        if ($date <= $currentDate) {
+            throw new Exception("Event date cannot be in the past.");
+        }
+        $event = new Event($name, $description, $date);
+        $creatorId = $this->getId();
+        return $event->addEvent($creatorId);
     }
 
-    public function getEventParticipants(int $eventId): string {
-        $participants = Event::getParticipants($eventId);
-        return !empty($participants) ? implode(', ', $participants) : "No participants found.";
+    public function getEventParticipants($eventId) {
+        $stmt = $this->dbCnx->prepare("SELECT participant_id FROM EventParticipant WHERE event_id = ?");
+        $stmt->execute([$eventId]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    public function deleteEvent(int $eventId): void {
-        Event::delete($eventId);
+    public function deleteEvent(int $eventId) {
+
+        $stmt = $this->dbCnx->prepare("DELETE FROM `Event` WHERE eventId = ?");
+        $stmt->execute([$eventId]);
     }
 
-    public function editEvent(int $eventId, string $newData): void {
-        Event::update($eventId, $newData);
+    public function editEventName($eventId, $newName): void {
+        // check if event exists with this name
+        $stmt = $this->dbCnx->prepare("SELECT eventId FROM `Event` WHERE name = ?");
+        $stmt->execute([$newName]);
+        $eventId = $stmt->fetchColumn();
+        if ($eventId) {
+            throw new Exception("Event with this name already exists.");
+        }
+        //update event name in db
+        $stmt = $this->dbCnx->prepare("UPDATE `Event` SET name = ? WHERE eventId = ?");
+        $stmt->execute([$newName, $eventId]);
     }
 
-    public function getEvents(int $userId): array {
-        return Event::getEventsByCreator($userId);
+    public function editEventDescription($eventId, $newDescription): void {
+        
+        $stmt = $this->dbCnx->prepare("UPDATE `Event` SET description = ? WHERE eventId = ?");
+        $stmt->execute([$newDescription, $eventId]);
+    }
+
+    public function editEventDate($eventId, $newDate): void {
+        // check if event date is in the past
+        $currentDate = new DateTime();
+        if ($newDate <= $currentDate) {
+            throw new Exception("Event date cannot be in the past.");
+        }
+        $stmt = $this->dbCnx->prepare("UPDATE `Event` SET date = ? WHERE eventId = ?");
+        $stmt->execute([$newDate, $eventId]);
+    }
+
+    public function getEvents(): array {
+        return Event::getEvents();
     }
 
 }
