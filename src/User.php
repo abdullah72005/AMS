@@ -1,20 +1,7 @@
 <?php
 
-// Set session cookie to last 30 days
-ini_set('session.cookie_lifetime', 30 * 24 * 60 * 60); // 30 days
-ini_set('session.gc_maxlifetime', 30 * 24 * 60 * 60);   // 30 days
 
-// Security options (recommended)
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_strict_mode', 1);
-ini_set('session.cookie_secure', 0); 
-
-
-// Start session
-session_start();
-
-
-class User
+abstract class User
 {
     private $userId;
     private $username;
@@ -22,46 +9,42 @@ class User
     private $role;
     protected $dbCnx;
 
-    public function __construct($username, $password)
+    public function __construct($username)
     {
         // check input
-        if (empty($username) || empty($password)) {
-            throw new InvalidArgumentException("Username, password, and role cannot be empty.");
+        if (empty($username)) {
+            throw new InvalidArgumentException("Username cannot be empty.");
         }
-        if (!is_string($username) || !is_string($password)) {
-            throw new InvalidArgumentException("Username, password, and role must be strings.");
+        if (!is_string($username)) {
+            throw new InvalidArgumentException("Username must be strings.");
         }
         
 
         // initialize properties
         $this->username = $username;
-        $this->password = $password;
 
         // initialize database connection
         $this->dbCnx = require('db.php');
     }
 
-    public function register_user($role)
+    public function register_user($password, $role)
     {
-        // Set session cookie to last 30 days
-        ini_set('session.cookie_lifetime', 30 * 24 * 60 * 60); // 30 days
-        ini_set('session.gc_maxlifetime', 30 * 24 * 60 * 60);   // 30 days
-
-        // Security options (recommended)
-        ini_set('session.cookie_httponly', 1);
-        ini_set('session.use_strict_mode', 1);
-        ini_set('session.cookie_secure', 0); 
-
-
-        // Start session
-        session_start();
-
         
         // check input
         if ($role !== 'Admin' && $role !== 'Alumni' && $role !== 'Student' && $role !== 'FacultyStaff') {
             throw new InvalidArgumentException("Role must be either 'Admin', 'Alumni', 'Student', or 'FacultyStaff'.");
         }
+
+        // check input
+        if (empty($password)) {
+            throw new InvalidArgumentException("password cannot be empty.");
+        }
+        if (!is_string($password)) {
+            throw new InvalidArgumentException("password must be strings.");
+        }
+
         $this->role = $role;
+        $this->password = $password;
 
         // check if username already exists
         $stmt = $this->dbCnx->prepare("SELECT COUNT(*) FROM User WHERE username = ?");
@@ -76,18 +59,12 @@ class User
         $stmt->execute([$this->username, password_hash($this->password, PASSWORD_BCRYPT), $this->role]);
         $this->userId = $this->dbCnx->lastInsertId();
 
-        // set session variables
-        $_SESSION['user_id'] = $this->userId;
-        $_SESSION['username'] = $this->username;
-        $_SESSION['role'] = $this->role;
-
         // log user in
-        $this->login_user();
         
         return $this->userId;
     }
 
-    public function login_user()
+    public function login_user($password)
     {
         session_unset();
         session_destroy();
@@ -105,11 +82,19 @@ class User
         // Start session
         session_start();
 
+         // check input
+         if (empty($password)) {
+            throw new InvalidArgumentException("password cannot be empty.");
+        }
+        if (!is_string($password)) {
+            throw new InvalidArgumentException("password must be strings.");
+        }
+
         // check if user is registered
         $stmt = $this->dbCnx->prepare("SELECT * FROM User WHERE username = ?");
         $stmt->execute([$this->username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!($user && password_verify($this->password, $user['password_hash']))) {
+        if (!($user && password_verify($password, $user['password_hash']))) {
             throw new Exception("Invalid username or password.");
         }
 
@@ -121,6 +106,7 @@ class User
 
         $this->userId = $user['user_id'];
         $this->username = $user['username'];
+        $this->password = $password;
         $this->role = $user['role'];
 
         return true;
@@ -136,10 +122,6 @@ class User
         return $this->username;
     }
 
-    public function getRole()
-    {
-        return $this->role;
-    }
 
     public function setUsername($newUsername)
     {
@@ -168,6 +150,29 @@ class User
         return true;
     }
 
+    static public function getRole($username)
+    {
+        if (empty($username) || !is_string($username)) {
+            throw new InvalidArgumentException("Username must be a non-empty string.");
+        }
+    
+        // Get DB connection (assuming db.php returns a PDO instance)
+        $dbCnx = require('db.php');
+    
+        // Prepare and execute query
+        $stmt = $dbCnx->prepare("SELECT role FROM User WHERE username = ?");
+        $stmt->execute([$username]);
+
+        // Fetch result
+        $role = $stmt->fetchColumn();
+
+    
+        
+
+        return $role ?: null;
+    }
+
 }
+
 
 ?>

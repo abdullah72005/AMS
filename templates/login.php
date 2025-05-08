@@ -7,5 +7,5 @@ session_destroy();
 <?php
 $childView = 'views/login-view.php';
 $titleView = 'Login';
-include('layout.php');
+include_once('layout.php');
 ?>

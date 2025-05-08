@@ -1,5 +1,9 @@
 <?php 
 require_once("../src/User.php");
+require_once("../src/Admin.php");
+require_once("../src/Alumni.php");
+require_once("../src/FacultyStaff.php");
+require_once("../src/Student.php");
 
 $errorMsg = "";
 
@@ -8,8 +12,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $username = $_POST['username'];
         $pass = $_POST['pass'];
         $role = $_POST['role'];
-        $user = new User($username, $pass);
-        $user->register_user($role);
+        if ($role == "Alumni") {
+            $user = new Alumni($username);
+        } elseif ($role == "Student") {
+            $user = new Student($username);
+        } elseif ($role == "FacultyStaff") {
+            $user = new FacultyStaff($username);
+        } elseif ($role == "Admin") {
+            $user = new Admin($username);
+        } else {
+            throw new Exception("Invalid role selected.");
+        }
+
+        $user->register_user($pass, $role);
         header("Location: index.php");
         exit;
     } catch (Exception $e) {
