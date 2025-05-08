@@ -18,7 +18,6 @@ abstract class User
             throw new InvalidArgumentException("Username must be strings.");
         }
         
-
         // initialize properties
         $this->username = $username;
     }
@@ -110,7 +109,6 @@ abstract class User
         $_SESSION['username'] = $user['username'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['loggedin'] = true;
-        $_SESSION['userObj'] = $this;
 
 
 
@@ -119,7 +117,18 @@ abstract class User
 
     public function getId()
     {
-        return $this->userId;
+        // init db
+        $dbCnx = require('db.php');
+
+        // check if user is registered
+        $stmt = $dbCnx->prepare("SELECT * FROM User WHERE username = ?");
+        $stmt->execute([$this->username]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$user) {
+            throw new Exception("User not registered, has no id.");
+        }
+
+        return $user['user_id'];
     }
 
     public function getUsername()
@@ -160,6 +169,7 @@ abstract class User
 
         return true;
     }
+
 
     static public function getRole($username)
     {

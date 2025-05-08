@@ -7,6 +7,10 @@ require_once("../src/Student.php");
 
 $errorMsg = "";
 
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         $username = $_POST['username'];

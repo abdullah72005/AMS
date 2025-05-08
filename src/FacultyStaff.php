@@ -110,6 +110,13 @@ class FacultyStaff extends User{
         return Event::getEvents();
     }
 
+    public function login_user($password)
+    {
+        parent::login_user($password);
+
+        $_SESSION['userObj'] = $this;
+    }
+
 }
 
 ?>

@@ -1,4 +1,9 @@
 <?php 
+
+require_once("../src/User.php");
+require_once("../src/Admin.php");
+
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }

@@ -73,6 +73,13 @@ class Alumni extends User
         $stmt = $dbCnx->prepare("INSERT INTO EventParticipant (event_id, participant_id) VALUES (?, ?)");
         $stmt->execute([$eventId, $this->getId()]);
     }
+
+    public function login_user($password)
+    {
+        parent::login_user($password);
+
+        $_SESSION['userObj'] = $this;
+    }
     
 }
 

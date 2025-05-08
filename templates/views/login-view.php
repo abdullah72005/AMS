@@ -5,6 +5,10 @@ require_once("../src/Alumni.php");
 require_once("../src/FacultyStaff.php");
 require_once("../src/Student.php");
 
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 $errorMsg = "";  // Initialize error message
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

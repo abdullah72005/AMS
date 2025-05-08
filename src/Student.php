@@ -27,7 +27,13 @@ class Student extends User
         catch (Exception $e) {
             return "Failed to register alumni: " . $e->getMessage();
         }
+    }
 
+    public function login_user($password)
+    {
+        parent::login_user($password);
+
+        $_SESSION['userObj'] = $this;
     }
 }
 ?>

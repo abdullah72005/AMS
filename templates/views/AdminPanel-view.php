@@ -2,12 +2,11 @@
 require_once("../src/User.php");
 require_once("../src/Admin.php");
 
-
+session_start();
 
 $errorMsg = "";
 $successMsg = "";
 $userData = null;
-
 
  
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
