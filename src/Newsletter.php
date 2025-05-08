@@ -6,12 +6,13 @@ class Newsletter
     private $body;
     private $creatorId;
     private $state;
-    public function __construct($creatorId , $title = null, $body = null,State  $state = new DraftState(), )
+    public function __construct($creatorId , $title = null, $body = null,State  $state = new DraftState(), $id = null)
     {
         $this->title = $title;
         $this->body = $body;
         $this->creatorId = $creatorId;
         $this->state = $state;
+        $this->id = $id;
     }
     public function getId()
     {
@@ -86,11 +87,15 @@ class Newsletter
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("INSERT INTO Newsletter (title, body, creatorId, publishedstate) VALUES (?, ?, ?, ?)");
         $stmt->execute([$this->title, $this->body, $this->creatorId,$this->getIntState()]);
-        echo "Saving newsletter.\n";}
+        $this->id = $dbCnx->lastInsertId();
+        return $this->getId();
+        }
         catch (Exception $e) {
             echo "Failed to save newsletter: " . $e->getMessage();
         }
     }
+
+
 }
 
 

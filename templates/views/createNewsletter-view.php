@@ -39,8 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $newsletter->save();
     } else {
         $newsletter = $user->createNewsletter($title, $description, $state);
-        $newsletter->save();
+        $id = $newsletter->save();
     }
+    header("Location: /newsletter.php?id=" . $id);
     exit;
 }
 ?>    
