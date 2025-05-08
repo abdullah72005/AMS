@@ -1,6 +1,7 @@
 <?php   
 require_once 'User.php';
-require_once 'Donation.php';
+require_once __DIR__ . '/Donation.php';
+
 class Alumni extends User
 {
     private $mentorStatus; 
@@ -8,7 +9,8 @@ class Alumni extends User
     private $fieldOfstudy;
     private $donations = [];
 
-    public function __construct($username){
+    public function __construct($username)
+    {
         parent::__construct($username);
         $stmt = $this->dbCnx->prepare("SELECT * FROM Alumni WHERE userId = ?");
         $stmt->execute([$this->getID()]);
@@ -21,39 +23,50 @@ class Alumni extends User
             throw new Exception("Alumni data not found.");
         }
     }
-    public function serveAsMentor($verfied, $mentorStatus)
+
+    public function serveAsMentor()
     {
-        if ($verfied && !$mentorStatus) {
-            $this->updateMentorStatus(true);
-        } 
-        elseif($verfied == false) 
-        {
-            throw new Exception("You are not verified to serve as a mentor.");
+        if (!$this->verfied) {
+            throw new Exception("You must be verified to serve as a mentor");
         }
-        else
-        {
-            throw new Exception("You are already serving as a mentor.");
+        
+        $this->updateMentorStatus(true);
+        new Mentorship($this->getID()); // Create mentorship relationship
+    }
+
+    public function getMentorship(): ?Mentorship 
+    {
+        try {
+            return new Mentorship($this->getID());
+        } 
+        catch (Exception $e) {
+            return null;
         }
     }
+
     public function updateMentorStatus($newMentorStatus)
     {
         $stmt = $this->dbCnx->prepare("UPDATE Alumni SET mentor = ? WHERE userId = ?");
         $stmt->execute([$this->mentorStatus, $this->getID()]);
         $this->mentorStatus = $newMentorStatus;
     }
+
     public function isMentor()
     {
         return $this->mentorStatus;
     }
+
     public function isVerfied()
     {
         return $this->verfied;
     }
+
     public function updateFieldOfstudy()
     {
         $stmt = $this->dbCnx->prepare("UPDATE Alumni SET major = ? WHERE userId = ?");
         $stmt->execute([$this->fieldOfstudy, $this->getId()]);
     }
+
     public function getFieldOfStudy()
     {
         $stmt = $this->dbCnx->prepare("SELECT major FROM Alumni WHERE userId = ?");
@@ -81,13 +94,12 @@ class Alumni extends User
             $stmt = $this->dbCnx->prepare("INSERT INTO Alumni (userId) VALUES (:user_id)");
             $stmt->bindParam(':user_id', $id);
             $stmt->execute();
-            $this->login_user($password); // Log in the user after registration
+            $this->login_user($password);
             return $id;
         }
         catch (Exception $e) {
             return "Failed to register alumni: " . $e->getMessage();
         }
-
     }
     
 }
