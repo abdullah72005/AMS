@@ -64,30 +64,30 @@ class Event {
 
   
 
-    public static function Edit(int $eventId, string $newData): void {
+    public function Edit(int $eventId, string $newData): void {
         $stmt = $this->dbCnx->prepare("UPDATE events SET name = ?, description = ?, date = ? WHERE event_id = ?");
         $stmt->execute([$newData, $newData, (new DateTime($newData))->format('Y-m-d H:i:s'), $eventId]);
     }
 
-    public static function delete(int $eventId): void {
+    public function delete(int $eventId): void {
         $stmt = $this->dbCnx->prepare("DELETE FROM events WHERE event_id = ?");
         $stmt->execute([$eventId]);
     }
 
-    public static function getEventsByCreator(int $creatorId): array {
+    public function getEventsByCreator(int $creatorId): array {
     
         $stmt = $this->dbCnx->prepare("SELECT event_id FROM events WHERE creator_id = ?");
         $stmt->execute([$creatorId]);
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    public static function getParticipants(int $eventId): array {
+    public function getParticipants(int $eventId): array {
         $stmt = $this->dbCnx->prepare("SELECT alumni_id FROM participants WHERE event_id = ?");
         $stmt->execute([$eventId]);
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    public static function addParticipant(int $eventId, int $alumniId): void {
+    public function addParticipant(int $eventId, int $alumniId): void {
         $stmt = $this->dbCnx->prepare("INSERT INTO participants (event_id, alumni_id) VALUES (?, ?)");
         $stmt->execute([$eventId, $alumniId]);
     }

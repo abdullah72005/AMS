@@ -10,7 +10,6 @@ class FacultyStaff extends User{
         $creatorId=$this->getId();
         $event->addEvent(creatorId);
         return $event->save();
-
     }
 
     public function getEventParticipants(int $eventId): string {
