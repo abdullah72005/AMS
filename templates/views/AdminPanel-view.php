@@ -1,12 +1,17 @@
 <?php
-require_once("../src/User.php");
-require_once("../src/Admin.php");
-
 
 
 $errorMsg = "";
 $successMsg = "";
 $userData = null;
+
+$admin = $_SESSION['userObj'];
+// Check if user is logged in and is an Admin
+if (!isset($admin) || !($admin instanceof Admin)) {
+    header("Location: index.php");
+    exit();
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         $admin = $_SESSION['userObj'];

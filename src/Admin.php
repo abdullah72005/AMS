@@ -165,4 +165,11 @@ class Admin extends User
         }
 
     }
+
+    public function login_user($password)
+    {
+        parent::login_user($password);
+
+        $_SESSION['userObj'] = $this;
+    }
 }

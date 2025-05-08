@@ -11,13 +11,14 @@ class Student extends User
         parent::__construct($username);
     }
 
-    public function selectMentor($mentor)
+    public function selectMentor($mentorId)
     {
         // init db
         $dbCnx = require('db.php');
 
-        $stmt = $dbCnx->prepare("UPDATE Alumni SET mentor = ? WHERE userId = ?");
-        $stmt->execute([$mentor, $this->getID()]);
+        $stmt = $dbCnx->prepare("INSERT INTO Student_Mentor (student_id, mentor_id) VALUES (?, ?)");
+        $stmt->execute([$this->getID(), $mentorId]);
+
     }
 
     public function search($fieldOfstudy)
@@ -25,7 +26,7 @@ class Student extends User
         // init db
         $dbCnx = require('db.php');
 
-        $stmt = $dbCnx->prepare("SELECT * FROM Alumni WHERE major = ? and mentor = 1");
+        $stmt = $dbCnx->prepare("SELECT User.username, Alumni.graduationDate, Alumni.major FROM Alumni INNER JOIN User ON Alumni.userId User.user_id WHERE Alumni.mentor = 1 AND Alumni.major = ?;");
         $stmt->execute([$fieldOfstudy]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -46,6 +47,22 @@ class Student extends User
         catch (Exception $e) {
             return "Failed to register alumni: " . $e->getMessage();
         }
+    }
+
+    public function seeAllMentors()
+    {
+        // init db
+        $dbCnx = require('db.php');
+
+        $stmt = $dbCnx->prepare("SELECT User.username, Alumni.graduationDate, Alumni.major FROM Alumni INNER JOIN User ON Alumni.userId User.user_id WHERE Alumni.mentor = 1;");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function login_user($password)
+    {
+        parent::login_user($password);
+        $_SESSION['userObj'] = $this;
     }
 }
 ?>

@@ -13,23 +13,6 @@ class Alumni extends User
     {
         parent::__construct($username);
 
-        // init db
-        $dbCnx = require('db.php');
-
-        $stmt = $dbCnx->prepare("SELECT * FROM Alumni WHERE userId = ?");
-
-        $stmt->execute([$this->getID()]);
-        $alumniData = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($alumniData) 
-        {
-            $this->mentorStatus = $alumniData['mentor'];
-            $this->verfied = $alumniData['verified'];
-            $this->fieldOfstudy = $alumniData['major'];
-        } 
-        else 
-        {
-            throw new Exception("Alumni data not found.");
-        }
     }
 
     public function serveAsMentor()
@@ -49,7 +32,7 @@ class Alumni extends User
         $dbCnx = require('db.php');
 
         $stmt = $dbCnx->prepare("UPDATE Alumni SET mentor = ? WHERE userId = ?");
-        $stmt->execute([$this->mentorStatus, $this->getID()]);
+        $stmt->execute([$newMentorStatus, $this->getID()]);
         $this->mentorStatus = $newMentorStatus;
     }
 
@@ -93,8 +76,8 @@ class Alumni extends User
         // init db
         $dbCnx = require('db.php');
 
-        $stmt = $dbCnx->prepare("SELECT * FROM donations WHERE user_id = :user_id");
-        $stmt->bindParam(':user_id', $this->getId());
+        $stmt = $dbCnx->prepare("SELECT * FROM donations WHERE userId = :userId");
+        $stmt->bindParam(':userId', $this->getId());
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -105,11 +88,10 @@ class Alumni extends User
 
         try {
             $id = parent::register_user($password, $role); 
-            $stmt = $dbCnx->prepare("INSERT INTO Alumni (userId) VALUES (:user_id)");
-            $stmt->bindParam(':user_id', $id);
+            $stmt = $dbCnx->prepare("INSERT INTO Alumni (userId) VALUES (:userId)");
+            $stmt->bindParam(':userId', $id);
             $stmt->execute();
             $this->login_user($password);
-            return $id;
         }
         catch (Exception $e) {
             return "Failed to register alumni: " . $e->getMessage();
@@ -148,6 +130,30 @@ class Alumni extends User
 
         $stmt = $dbCnx->prepare("INSERT INTO EventParticipant (event_id, participant_id) VALUES (?, ?)");
         $stmt->execute([$eventId, $this->getId()]);
+    }
+
+    public function login_user($password)
+    {
+        // init db
+        $dbCnx = require('db.php');
+
+        parent::login_user($password);
+        $stmt = $dbCnx->prepare("SELECT * FROM Alumni WHERE userId = ?");
+        $stmt->execute([$this->getID()]);
+        $alumniData = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($alumniData) 
+        {
+            $this->mentorStatus = $alumniData['mentor'];
+            $this->verfied = $alumniData['verified'];
+            $this->fieldOfstudy = $alumniData['major'];
+        } 
+        else 
+        {
+            throw new Exception("Alumni data not found.");
+        }
+
+
+        $_SESSION['userObj'] = $this;
     }
 }
 

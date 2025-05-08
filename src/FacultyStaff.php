@@ -45,7 +45,9 @@ class FacultyStaff extends User{
             throw new Exception("Event date cannot be in the past.");
         }
         $event = new Event($name, $description, $date);
+
         $creatorId = $this->getId();
+
         return $event->addEvent($creatorId);
     }
 
@@ -108,6 +110,13 @@ class FacultyStaff extends User{
 
     public function getEvents(): array {
         return Event::getEvents();
+    }
+
+    public function login_user($password)
+    {
+        parent::login_user($password);
+
+        $_SESSION['userObj'] = $this;
     }
 
 }
