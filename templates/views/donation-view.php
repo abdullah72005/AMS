@@ -16,13 +16,13 @@ else if (!isset($_SESSION['loggedin']) || User::getRole($_SESSION['username']) !
 
 else {
     ?>
-<div class="container mt-5">
+<div class="container-fluid mt-5 col">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <h2 class="mb-4 text-center">donate</h2>
             <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
                 <div class="mb-3">
-                    <label for="username" class="form-label">donation amount</label>
+                    <label for="amount" class="form-label">donation amount</label>
                     <input 
                         type="number" 
                         class="form-control" 
@@ -33,7 +33,7 @@ else {
                 </div>
 
                 <div class="mb-3">
-                    <label for="pass" class="form-label">donation cause</label>
+                    <label for="cause" class="form-label">donation cause</label>
                     <input 
                         type="text" 
                         class="form-control" 
@@ -51,7 +51,7 @@ else {
     </div>
     <?php } ?>
     <?php if (!empty($donations)): ?>
-                        <div class="mt-4">
+                        <div class="mt-4 container-fluid">
                             <h5>your donations(<?= count($donations) ?>):</h5>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover">
@@ -74,8 +74,6 @@ else {
                                 </table>
                             </div>
                         </div>
+                    
                     <?php endif; ?>
-</div>
-
-
-<?php ?>
+                </div>
