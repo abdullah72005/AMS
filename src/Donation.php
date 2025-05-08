@@ -15,7 +15,9 @@ class Donation
     }
     public function donate()
     {
+        $dbCnx = require('db.php');
         try {
+            $stmt = $dbCnx->prepare("INSERT INTO Donation (donor_id, amount, date, cause) VALUES (:user_id, :amount,:DATE, :cause)");
             $db = require('db.php');
             $stmt = $db->prepare("INSERT INTO donation (donor_id, amount, DATE, cause) VALUES (:user_id, :amount,:DATE, :cause)");
             $stmt->bindValue(':DATE', $this->date);

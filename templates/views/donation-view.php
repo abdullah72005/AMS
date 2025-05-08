@@ -1,15 +1,18 @@
 <?php 
-require_once("../src/Alumni.php");
+
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $amount = $_POST['amount'];
     $cause = $_POST['cause'];
-    $id = $_SESSION['user_id'];
-    $username = $_SESSION['username'];
-    $user = new Alumni($username);
-    echo $user->makeDonation($id,$amount , $cause);
-}else if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Alumni'){        
-    echo "You are not allowed to make a donation.";
-    exit;} else {?>
+    $user = $_SESSION['userObj'];
+    $id = $user->getId();
+    $username = $user->getUsername();
+    $user->makeDonation($id, $amount , $cause);
+}
+else if (!isset($_SESSION['loggedin']) || User::getRole($_SESSION['username']) != 'Alumni'){        
+    echo "You are not allowed to make a donation.    ";
+    exit;} 
+else {
+    ?>
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">

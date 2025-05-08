@@ -1,18 +1,14 @@
 <?php
-require_once("../src/User.php");
-require_once("../src/Admin.php");
-
 
 
 $errorMsg = "";
 $successMsg = "";
 $userData = null;
 
-
  
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
-        $admin = new Admin($_SESSION['username']);
+        $admin = $_SESSION['userObj'];
         if (isset($_POST['addUser'])) {
             $admin->createUser($_POST['username'], $_POST['password'], $_POST['role']);
             $successMsg = "User added successfully!";

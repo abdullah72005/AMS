@@ -1,9 +1,4 @@
 <?php 
-require_once("../src/User.php");
-require_once("../src/Admin.php");
-require_once("../src/Alumni.php");
-require_once("../src/FacultyStaff.php");
-require_once("../src/Student.php");
 
 $errorMsg = "";  // Initialize error message
 
