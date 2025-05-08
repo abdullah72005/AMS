@@ -5,6 +5,26 @@ require_once 'User.php';
 
 class FacultyStaff extends User{
 
+    public function __construct($username)
+    {
+        parent::__construct($username);
+    }
+
+    public function register_user($password, $role)
+    {
+        try {
+            $id = parent::register_user($password, $role); 
+            $stmt = $this->dbCnx->prepare("INSERT INTO FacultyStaff (user_id) VALUES (:user_id)");
+            $stmt->bindParam(':user_id', $id);
+            $stmt->execute();
+            $this->login_user($password); // Log in the user after registration
+            return $id;
+        }
+        catch (Exception $e) {
+            return "Failed to register alumni: " . $e->getMessage();
+        }
+    }
+
     public function scheduleEvent(string $name, string $description, DateTime $date): int {
         // check if event exists with this name
         $stmt = $this->dbCnx->prepare("SELECT eventId FROM `Event` WHERE name = ?");
@@ -33,7 +53,10 @@ class FacultyStaff extends User{
 
         $stmt = $this->dbCnx->prepare("DELETE FROM `Event` WHERE eventId = ?");
         $stmt->execute([$eventId]);
+
     }
+
+  
 
     public function editEventName($eventId, $newName): void {
         // check if event exists with this name

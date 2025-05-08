@@ -7,5 +7,5 @@ session_destroy();
 <?php
 $childView = 'views/register-view.php';
 $titleView = 'Register';
-include('layout.php');
+include_once('layout.php');
 ?>
