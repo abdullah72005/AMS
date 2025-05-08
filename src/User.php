@@ -7,7 +7,6 @@ abstract class User
     private $username;
     private $password;
     private $role;
-    protected $dbCnx;
 
     public function __construct($username)
     {
@@ -22,13 +21,12 @@ abstract class User
 
         // initialize properties
         $this->username = $username;
-
-        // initialize database connection
-        $this->dbCnx = require('db.php');
     }
 
     public function register_user($password, $role)
     {
+        // init db
+        $dbCnx = require('db.php');
         
         // check input
         if ($role !== 'Admin' && $role !== 'Alumni' && $role !== 'Student' && $role !== 'FacultyStaff') {
@@ -47,7 +45,7 @@ abstract class User
         $this->password = $password;
 
         // check if username already exists
-        $stmt = $this->dbCnx->prepare("SELECT COUNT(*) FROM User WHERE username = ?");
+        $stmt = $dbCnx->prepare("SELECT COUNT(*) FROM User WHERE username = ?");
         $stmt->execute([$this->username]);
         $count = $stmt->fetchColumn();
         if ($count > 0) {
@@ -55,17 +53,20 @@ abstract class User
         }
 
         // insert new user
-        $stmt = $this->dbCnx->prepare("INSERT INTO User (username, password_hash, role) VALUES (?, ?, ?)");
+        $stmt = $dbCnx->prepare("INSERT INTO User (username, password_hash, role) VALUES (?, ?, ?)");
         $stmt->execute([$this->username, password_hash($this->password, PASSWORD_BCRYPT), $this->role]);
-        $this->userId = $this->dbCnx->lastInsertId();
+        $this->userId = $dbCnx->lastInsertId();
 
-        // log user in
         
         return $this->userId;
     }
 
     public function login_user($password)
     {
+
+        // init db
+        $dbCnx = require('db.php');
+
         session_unset();
         session_destroy();
 
@@ -91,23 +92,25 @@ abstract class User
         }
 
         // check if user is registered
-        $stmt = $this->dbCnx->prepare("SELECT * FROM User WHERE username = ?");
+        $stmt = $dbCnx->prepare("SELECT * FROM User WHERE username = ?");
         $stmt->execute([$this->username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!($user && password_verify($password, $user['password_hash']))) {
             throw new Exception("Invalid username or password.");
         }
 
+        $this->userId = $user['user_id'];
+        $this->username = $user['username'];
+        $this->password = $password;
+        $this->role = $user['role'];
+
+
         // initalize session variables
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['loggedin'] = true;
-
-        $this->userId = $user['user_id'];
-        $this->username = $user['username'];
-        $this->password = $password;
-        $this->role = $user['role'];
+        $_SESSION['userObj'] = serialize($this);
 
         return true;
     }
@@ -125,8 +128,11 @@ abstract class User
 
     public function setUsername($newUsername)
     {
+        // init db
+        $dbCnx = require('db.php');
+
         // check if new username already exists
-        $stmt = $this->dbCnx->prepare("SELECT COUNT(*) FROM User WHERE username = ?");
+        $stmt = $dbCnx->prepare("SELECT COUNT(*) FROM User WHERE username = ?");
         $stmt->execute([$newUsername]);
         $count = $stmt->fetchColumn();
         if ($count > 0) {
@@ -134,7 +140,7 @@ abstract class User
         }
 
         // update username
-        $stmt = $this->dbCnx->prepare("UPDATE User SET username = ? WHERE user_id = ?");
+        $stmt = $dbCnx->prepare("UPDATE User SET username = ? WHERE user_id = ?");
         $stmt->execute([$newUsername, $this->userId]);
         $this->username = $newUsername;
 
@@ -142,8 +148,11 @@ abstract class User
     }
     public function setPassword($newPassword)
     {
+        // init db
+        $dbCnx = require('db.php');
+        
         // update password
-        $stmt = $this->dbCnx->prepare("UPDATE User SET password_hash = ? WHERE user_id = ?");
+        $stmt = $dbCnx->prepare("UPDATE User SET password_hash = ? WHERE user_id = ?");
         $stmt->execute([password_hash($newPassword, PASSWORD_BCRYPT), $this->userId]);
         $this->password = $newPassword;
 
@@ -165,9 +174,6 @@ abstract class User
 
         // Fetch result
         $role = $stmt->fetchColumn();
-
-    
-        
 
         return $role ?: null;
     }

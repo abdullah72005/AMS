@@ -7,13 +7,12 @@ require_once("../src/Admin.php");
 $errorMsg = "";
 $successMsg = "";
 $userData = null;
-
-
- 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
-        $admin = new Admin($_SESSION['username']);
+        $admin = $_SESSION['userObj'];
         if (isset($_POST['addUser'])) {
+            echo $admin;
+            throw new Exception($admin . " is not an admin");
             $admin->createUser($_POST['username'], $_POST['password'], $_POST['role']);
             $successMsg = "User added successfully!";
         } 
@@ -41,11 +40,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $allUsers = $admin->getAllUsers();
         } 
     } 
-    catch (Exception $e) 
-    {
+    catch (Exception $e){
         $errorMsg = $e->getMessage();
     }
 }
+
 ?>
 <div class="container mt-5">
     <div class="row justify-content-center">
