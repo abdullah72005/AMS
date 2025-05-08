@@ -7,9 +7,9 @@ class Alumni extends User
         parent::__construct($username);
     }
 
-    public function makeDonation($id , $amount, $cause)
+    public function makeDonation( $amount, $cause)
     { 
-        $donation = new Donation($id, $amount, $cause);
+        $donation = new Donation($this->getId(), $amount, $cause);
         return $donation->donate();
     }
 
