@@ -8,7 +8,6 @@ class FacultyStaff extends User{
     public function __construct($username)
     {
         parent::__construct($username);
-        $this->dbCnx = require("db.php");
     }
 
     public function register_user($password, $role)
