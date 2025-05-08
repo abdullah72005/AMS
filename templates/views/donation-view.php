@@ -6,6 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $cause = $_POST['cause'];
     $id = $user->getId();
     $user->makeDonation($id, $amount , $cause);
+    header("Location: ".$_SERVER['PHP_SELF']);
 }
 
 
