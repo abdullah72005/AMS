@@ -1,16 +1,19 @@
 <?php 
-
+$user = $_SESSION['userObj'];
+$donations = $user->getDonations();
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $amount = $_POST['amount'];
     $cause = $_POST['cause'];
-    $user = $_SESSION['userObj'];
     $id = $user->getId();
-    $username = $user->getUsername();
     $user->makeDonation($id, $amount , $cause);
 }
+
+
 else if (!isset($_SESSION['loggedin']) || User::getRole($_SESSION['username']) != 'Alumni'){        
-    echo "You are not allowed to make a donation.    ";
-    exit;} 
+    echo "You are not allowed to make a donation.  ";
+    exit;
+} 
+
 else {
     ?>
 <div class="container mt-5">
@@ -46,26 +49,25 @@ else {
             </form> 
         </div>
     </div>
-</div>
-<?php } ?>
-<?php if (!empty($allUsers)): ?>
+    <?php } ?>
+    <?php if (!empty($donations)): ?>
                         <div class="mt-4">
-                            <h5>All Users (<?= count($allUsers) ?>)</h5>
+                            <h5>your donations(<?= count($donations) ?>):</h5>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Username</th>
-                                            <th>Role</th>
+                                            <th>amount</th>
+                                            <th>cause</th>
+                                            <th>date</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($allUsers as $user): ?>
+                                        <?php foreach ($donations as $donation): ?>
                                             <tr>
-                                                <td><?= htmlspecialchars($user['user_id']) ?></td>
-                                                <td><?= htmlspecialchars($user['username']) ?></td>
-                                                <td><?= htmlspecialchars($user['role']) ?></td>
+                                                <td><?= htmlspecialchars($donation['amount']) ?></td>
+                                                <td><?= htmlspecialchars($donation['cause']) ?></td>
+                                                <td><?= htmlspecialchars($donation['date']) ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
@@ -73,4 +75,7 @@ else {
                             </div>
                         </div>
                     <?php endif; ?>
+</div>
+
+
 <?php ?>

@@ -3,7 +3,6 @@ require_once 'User.php';
 require_once __DIR__ . '/Donation.php';
 class Alumni extends User
 {   
-    private $donations = [];
     public function __construct($username){
         parent::__construct($username);
     }
@@ -17,11 +16,15 @@ class Alumni extends User
     public function getDonations()
     {
         // init db
+        try {        
         $dbCnx = require('db.php');
-        $stmt = $dbCnx->prepare("SELECT * FROM donations WHERE user_id = :user_id");
-        $stmt->bindParam(':user_id', $this->getId());
+        $stmt = $dbCnx->prepare("SELECT * FROM donation WHERE donor_id = :user_id");
+        $stmt->bindValue(':user_id', $this->getId());
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);}
+        catch (Exception $e) {
+            return "Failed to get donations: " . $e->getMessage();
+        }
     }
     public function register_user($password, $role)
     {
