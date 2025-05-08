@@ -8,6 +8,7 @@ class FacultyStaff extends User{
     public function __construct($username)
     {
         parent::__construct($username);
+        $this->dbCnx = require("db.php");
     }
 
     public function register_user($password, $role)
@@ -27,6 +28,8 @@ class FacultyStaff extends User{
 
     public function scheduleEvent(string $name, string $description, DateTime $date): int {
         // check if event exists with this name
+        $this->dbCnx = require("db.php");
+
         $stmt = $this->dbCnx->prepare("SELECT eventId FROM `Event` WHERE name = ?");
         $stmt->execute([$name]);
         $eventId = $stmt->fetchColumn();
@@ -39,7 +42,9 @@ class FacultyStaff extends User{
             throw new Exception("Event date cannot be in the past.");
         }
         $event = new Event($name, $description, $date);
+
         $creatorId = $this->getId();
+
         return $event->addEvent($creatorId);
     }
 

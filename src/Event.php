@@ -33,8 +33,8 @@ class Event {
 
     public function addEvent($creatorId){
         $this->creatorId=$creatorId;
-        $stmt = $this->dbCnx->prepare("INSERT INTO events (name, description, date, creatorId) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$this->name, $this->description, $this->date->format('d-m-y H:i:s'), $this->creatorId]);
+        $stmt = $this->dbCnx->prepare("INSERT INTO `Event` (name, description, date, creatorId) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$this->name, $this->description, $this->date->format('y-m-d H:i:s'), $this->creatorId]);
         
         $this->eventId = (int)$this->dbCnx->lastInsertId();
         return $this->eventId;
@@ -64,6 +64,7 @@ class Event {
 
 
 
+
     public static function getEvents() {
         // Get DB connection (assuming db.php returns a PDO instance)
         $dbCnx = require('db.php');
@@ -85,6 +86,14 @@ class Event {
         $stmt = $this->dbCnx->prepare("INSERT INTO EventParticipant (event_id, participant_id) VALUES (?, ?)");
         $stmt->execute([$this->eventId, $alumniId]);
     }
+
+    public static function getEventById($eventId) {
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT * FROM `Event` WHERE eventId = ?");
+        $stmt->execute([$eventId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
 }
 
 ?>

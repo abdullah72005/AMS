@@ -114,7 +114,18 @@ abstract class User
 
     public function getId()
     {
-        return $this->userId;
+        // init db
+        $dbCnx = require('db.php');
+
+        // check if user is registered
+        $stmt = $dbCnx->prepare("SELECT * FROM User WHERE username = ?");
+        $stmt->execute([$this->username]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$user) {
+            throw new Exception("User not registered, has no id.");
+        }
+
+        return $user['user_id'];
     }
 
     public function getUsername()
@@ -140,6 +151,7 @@ abstract class User
 
         return true;
     }
+
     public function setPassword($newPassword)
     {
         // update password
@@ -149,6 +161,12 @@ abstract class User
 
         return true;
     }
+
+
+
+   
+
+
 
     static public function getRole($username)
     {
