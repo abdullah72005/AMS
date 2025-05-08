@@ -12,6 +12,9 @@ class Admin extends User
 
     public function createUser($username, $password, $role)
     {
+        // init db
+        $dbCnx = require('db.php');
+
         // Validate inputs
         if (empty($username) || empty($password) || empty($role)) {
             throw new InvalidArgumentException("Username, password, and role cannot be empty.");
@@ -26,25 +29,28 @@ class Admin extends User
         }
 
         // Check username availability
-        $stmt = $this->dbCnx->prepare("SELECT COUNT(*) FROM User WHERE username = ?");
+        $stmt = $dbCnx->prepare("SELECT COUNT(*) FROM User WHERE username = ?");
         $stmt->execute([$username]);
         if ($stmt->fetchColumn() > 0) {
             throw new Exception("Username already exists.");
         }
 
         // Insert new user
-        $stmt = $this->dbCnx->prepare("INSERT INTO User (username, password_hash, role) VALUES (?, ?, ?)");
+        $stmt = $dbCnx->prepare("INSERT INTO User (username, password_hash, role) VALUES (?, ?, ?)");
         $stmt->execute([
             $username,
             password_hash($password, PASSWORD_BCRYPT),
             $role
         ]);
 
-        return $this->dbCnx->lastInsertId();
+        return $dbCnx->lastInsertId();
     }
 
     public function updateUserData($userId, $newUsername = null, $newPassword = null, $newRole = null)
     {
+        // init db
+        $dbCnx = require('db.php');
+
         // Validate at least one parameter is provided
         if ($newUsername === null && $newPassword === null && $newRole === null) {
             throw new InvalidArgumentException("At least one update parameter must be provided.");
@@ -60,7 +66,7 @@ class Admin extends User
             }
 
             // Check username availability
-            $stmt = $this->dbCnx->prepare("SELECT COUNT(*) FROM User WHERE username = ? AND user_id != ?");
+            $stmt = $dbCnx->prepare("SELECT COUNT(*) FROM User WHERE username = ? AND user_id != ?");
             $stmt->execute([$newUsername, $userId]);
             if ($stmt->fetchColumn() > 0) {
                 throw new Exception("Username already exists.");
@@ -95,35 +101,43 @@ class Admin extends User
 
         // Build and execute query
         $query = "UPDATE User SET " . implode(', ', $updates) . " WHERE user_id = ?";
-        $stmt = $this->dbCnx->prepare($query);
+        $stmt = $dbCnx->prepare($query);
         $stmt->execute($params);
-
     }
 
     public function deleteUser($userId)
     {
+        // init db
+        $dbCnx = require('db.php');
         // Verify user exists
-        $stmt = $this->dbCnx->prepare("SELECT user_id FROM User WHERE user_id = ?");
+        $stmt = $dbCnx->prepare("SELECT user_id FROM User WHERE user_id = ?");
         $stmt->execute([$userId]);
         if (!$stmt->fetch()) {
             throw new Exception("User not found.");
         }
 
         // Delete user
-        $stmt = $this->dbCnx->prepare("DELETE FROM User WHERE user_id = ?");
+        $stmt = $dbCnx->prepare("DELETE FROM User WHERE user_id = ?");
         $stmt->execute([$userId]);
 
     }
 
     public function getAllUsers()
     {
-        $stmt = $this->dbCnx->query("SELECT user_id, username, role FROM User");
+        // init db
+        $dbCnx = require('db.php');
+
+        $stmt = $dbCnx->query("SELECT user_id, username, role FROM User");
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getUser($username)
     {
-        $stmt = $this->dbCnx->prepare("SELECT user_id, username, role FROM User WHERE username = ?");
+        // init db
+        $dbCnx = require('db.php');
+
+        $stmt = $dbCnx->prepare("SELECT user_id, username, role FROM User WHERE username = ?");
         $stmt->execute([$username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         
@@ -133,11 +147,14 @@ class Admin extends User
         
         return $user;
     }
-       public function register_user($password, $role)
+    public function register_user($password, $role)
     {
+        // init db
+        $dbCnx = require('db.php');
+
         try {
             $id = parent::register_user($password, $role); 
-            $stmt = $this->dbCnx->prepare("INSERT INTO Admin (user_id) VALUES (:user_id)");
+            $stmt = $dbCnx->prepare("INSERT INTO Admin (user_id) VALUES (:user_id)");
             $stmt->bindParam(':user_id', $id);
             $stmt->execute();
             $this->login_user($password); // Log in the user after registration
@@ -147,5 +164,12 @@ class Admin extends User
             return "Failed to register alumni: " . $e->getMessage();
         }
 
+    }
+
+    public function login_user($password)
+    {
+        parent::login_user($password);
+
+        $_SESSION['userObj'] = $this;
     }
 }

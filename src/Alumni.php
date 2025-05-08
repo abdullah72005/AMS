@@ -16,16 +16,20 @@ class Alumni extends User
 
     public function getDonations()
     {
-        $stmt = $this->dbCnx->prepare("SELECT * FROM donations WHERE user_id = :user_id");
+        // init db
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT * FROM donations WHERE user_id = :user_id");
         $stmt->bindParam(':user_id', $this->getId());
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function register_user($password, $role)
     {
+        // init db
+        $dbCnx = require('db.php');
         try {
             $id = parent::register_user($password, $role); 
-            $stmt = $this->dbCnx->prepare("INSERT INTO Alumni (userId) VALUES (:user_id)");
+            $stmt = $dbCnx->prepare("INSERT INTO Alumni (userId) VALUES (:user_id)");
             $stmt->bindParam(':user_id', $id);
             $stmt->execute();
             $this->login_user($password); // Log in the user after registration
@@ -39,8 +43,10 @@ class Alumni extends User
 
 
     public function signupForEvent(int $eventId): void {
+        // init db
+        $dbCnx = require('db.php');
         // check if event exists
-        $stmt = $this->dbCnx->prepare("SELECT eventId FROM `Event` WHERE eventId = ?");
+        $stmt = $dbCnx->prepare("SELECT eventId FROM `Event` WHERE eventId = ?");
         $stmt->execute([$eventId]);
         $eventId = $stmt->fetchColumn();
         if (!$eventId) {
@@ -48,7 +54,7 @@ class Alumni extends User
         }
 
         // check if user is already signed up
-        $stmt = $this->dbCnx->prepare("SELECT participant_id FROM EventParticipant WHERE event_id = ? AND participant_id = ?");
+        $stmt = $dbCnx->prepare("SELECT participant_id FROM EventParticipant WHERE event_id = ? AND participant_id = ?");
         $stmt->execute([$eventId, $this->getId()]);
         $participantId = $stmt->fetchColumn();  
         if ($participantId) {
@@ -56,7 +62,7 @@ class Alumni extends User
         }
 
         // check if event is in the past
-        $stmt = $this->dbCnx->prepare("SELECT date FROM `Event` WHERE eventId = ?");
+        $stmt = $dbCnx->prepare("SELECT date FROM `Event` WHERE eventId = ?");
         $stmt->execute([$eventId]);
         $eventDate = $stmt->fetchColumn();
         $currentDate = new DateTime();
@@ -64,8 +70,15 @@ class Alumni extends User
             throw new Exception("Event date cannot be in the past.");
         }
 
-        $stmt = $this->dbCnx->prepare("INSERT INTO EventParticipant (event_id, participant_id) VALUES (?, ?)");
+        $stmt = $dbCnx->prepare("INSERT INTO EventParticipant (event_id, participant_id) VALUES (?, ?)");
         $stmt->execute([$eventId, $this->getId()]);
+    }
+
+    public function login_user($password)
+    {
+        parent::login_user($password);
+
+        $_SESSION['userObj'] = $this;
     }
     
 }
