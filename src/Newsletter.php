@@ -6,13 +6,12 @@ class Newsletter
     private $body;
     private $creatorId;
     private $state;
-    public function __construct($id, $title = null, $body = null, $creatorId)
+    public function __construct($creatorId , $title = null, $body = null,  $state = new DraftState(), )
     {
-        $this->id = $id;
         $this->title = $title;
         $this->body = $body;
         $this->creatorId = $creatorId;
-        $this->state = new DraftState();
+        $this->state = $state;
     }
     public function getId()
     {

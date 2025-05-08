@@ -2,7 +2,7 @@
 
 require_once 'Event.php';
 require_once 'User.php';
-
+require_once __DIR__ . '/Newsletter.php';
 class FacultyStaff extends User{
 
     public function __construct($username)
@@ -127,6 +127,19 @@ class FacultyStaff extends User{
         catch (Exception $e) {
             return "Failed to get donations: " . $e->getMessage();
         }
+    }
+    public function createNewsletter($title, $description,  $state) {
+        new Newsletter($title, $description,  $state);
+    }
+    public function getNewsletter($id) {
+        // init db
+        $dbCnx = require('db.php');
+
+        $stmt = $dbCnx->prepare("SELECT * FROM Newsletter WHERE id = ?");
+        $stmt->execute([$id]);
+        $stmt->fetch(PDO::FETCH_ASSOC);
+        $newsletter = new Newsletter($stmt['title'], $stmt['body'], $stmt['creatorId'], $stmt['state']);
+        return $newsletter;
     }
 }
 
