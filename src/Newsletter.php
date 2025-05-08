@@ -42,7 +42,7 @@ class Newsletter
     {
         if ($this->state instanceof DraftState) {
             return 'DraftState';
-        } elseif ($this->state instanceof PublishedState) {
+        } else if ($this->state instanceof PublishedState) {
             return 'PublishedState';
         }
     }
@@ -119,6 +119,20 @@ class Newsletter
             $newsletters = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return array_map(function ($newsletter) {
                 return new Newsletter($newsletter['creatorId'], $newsletter['title'], $newsletter['body'], new PublishedState(), $newsletter['newsletter_id']);
+            }, $newsletters);
+        } catch (Exception $e) {
+            echo "Failed to get newsletters: " . $e->getMessage();
+        }
+    }
+    public static function getDraftedNewsletters()
+    {
+        try {        
+            $dbCnx = require('db.php');
+            $stmt = $dbCnx->prepare("SELECT * FROM Newsletter where publishedState = 0 order by newsletter_id DESC ");
+            $stmt->execute();
+            $newsletters = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map(function ($newsletter) {
+                return new Newsletter($newsletter['creatorId'], $newsletter['title'], $newsletter['body'], new DraftState(), $newsletter['newsletter_id']);
             }, $newsletters);
         } catch (Exception $e) {
             echo "Failed to get newsletters: " . $e->getMessage();

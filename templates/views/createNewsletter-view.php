@@ -14,6 +14,9 @@ if (isset($_GET['id']) && $_GET['id'] !== '') {
         exit;
     }
 }
+if ($newsletter->getIntState() === 1) {
+        echo "You cannot edit a published newsletter.";
+        exit;} 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'];
     $description = $_POST['description'];
@@ -62,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                             <div class="mb-3">
                                 <label for="description" class="form-label">newsletter Description</label>
-                                <textarea class="form-control" id="description" name="description" rows="4" value="<?= $newsletter ? $newsletter->getBody() : '' ?>" required></textarea>
+                                <textarea class="form-control" id="description" name="description" rows="4" required><?= isset($newsletter) ? htmlspecialchars($newsletter->getBody()) : '' ?></textarea>
                             </div>
 
                             <div class="mb-3 d-flex gap-2">

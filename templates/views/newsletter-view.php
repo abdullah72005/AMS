@@ -11,8 +11,8 @@ if (isset($_GET['id']) && $_GET['id'] !== '') {
 }
 ?>
 <div class="mt-4 container-fluid">
-    <?php if (!empty($newsletters)): ?>
-    <?php if(is_array($newsletters)) { ?>
+    <?php if (!empty($newsletters)){ ?>
+    <?php if(!(isset($_GET['id']) && $_GET['id'] !== '')){ ?>
     <h5>all donations(<?= count($newsletters) ?>):</h5>
     <div class="row">
                 <?php  foreach ($newsletters as $newsletter): ?>
@@ -35,4 +35,4 @@ if (isset($_GET['id']) && $_GET['id'] !== '') {
                     </div>
                 </div>
             </div>
-<?php endif; ?>
+<?php } ?>

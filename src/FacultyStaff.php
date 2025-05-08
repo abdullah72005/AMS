@@ -134,10 +134,15 @@ class FacultyStaff extends User{
         // init db
         $dbCnx = require('db.php');
 
-        $stmt = $dbCnx->prepare("SELECT * FROM Newsletter WHERE id = ?");
+        $stmt = $dbCnx->prepare("SELECT * FROM Newsletter WHERE Newsletter_id = ?");
         $stmt->execute([$id]);
-        $stmt->fetch(PDO::FETCH_ASSOC);
-        $newsletter = new Newsletter($stmt['title'], $stmt['body'], $stmt['creatorId'], $stmt['state']);
+        $res = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($res['publishedState'] === 0) {
+            $state = new DraftState();
+        } else {
+            $state = new PublishedState();
+        }
+        $newsletter = new Newsletter($res['creatorId'], $res['title'], $res['body'],$state);
         return $newsletter;
     }
 }
