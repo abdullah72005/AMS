@@ -1,9 +1,11 @@
 <?php
 $user = $_SESSION['userObj'];
+
 if ($_SESSION['role'] !== 'FacultyStaff') {
     echo "you do not have permission to create a newsletter.";
     exit;
 }
+
 if (isset($_GET['id']) && $_GET['id'] !== '') {
     try {
         $newsletter = $user->getNewsletter($_GET['id']);
@@ -11,20 +13,34 @@ if (isset($_GET['id']) && $_GET['id'] !== '') {
         echo "Failed to get newsletter: " . $e->getMessage();
         exit;
     }
-
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'];
     $description = $_POST['description'];
     $state = $_POST['state'];
+    switch ($state) {
+        case 'draft':
+            $state = new DraftState();
+            break;
+        case 'publish':
+            $state = new PublishedState();
+            break;
+    }
+
+    if ($state === 'delete') {
+        $newsletter->delete();
+        exit;
+    }
     if (isset($newsletter)) {
+        echo $state;
         $newsletter->editTitle($title);
         $newsletter->editBody($description);
         $newsletter->setState($state);
+        $newsletter->save();
     } else {
-        $user->createNewsletter($title, $description, $state);
+        $newsletter = $user->createNewsletter($title, $description, $state);
+        $newsletter->save();
     }
-    header('Location: /newsletter');
     exit;
 }
 ?>    

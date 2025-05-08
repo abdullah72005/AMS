@@ -6,7 +6,7 @@ class Newsletter
     private $body;
     private $creatorId;
     private $state;
-    public function __construct($creatorId , $title = null, $body = null,  $state = new DraftState(), )
+    public function __construct($creatorId , $title = null, $body = null,State  $state = new DraftState(), )
     {
         $this->title = $title;
         $this->body = $body;
@@ -29,6 +29,22 @@ class Newsletter
     {
         return $this->creatorId;
     }
+    public function getIntState()
+    {
+        if ($this->state instanceof DraftState) {
+            return 0;
+        } elseif ($this->state instanceof PublishedState) {
+            return 1;
+        }
+    }
+    public function getStringState()
+    {
+        if ($this->state instanceof DraftState) {
+            return 'DraftState';
+        } elseif ($this->state instanceof PublishedState) {
+            return 'PublishedState';
+        }
+    }
     public function editTitle($title)
     {
         $this->state->edit($this, 'title', $title);
@@ -45,9 +61,35 @@ class Newsletter
     {
         $this->body = $body;
     }
-    public function setTitle($title)
+    protected function setTitle($title)
     {
         $this->title = $title;
+    }
+    public function setState(State $state)
+    {
+        $this->state = $state;
+    }
+    public function delete()
+    {
+        try {        
+            $dbCnx = require('db.php');
+            $stmt = $dbCnx->prepare("DELETE FROM Newsletter WHERE id = ?");
+            $stmt->execute([$this->id]);
+            echo "Deleting newsletter.\n";}
+            catch (Exception $e) {
+                echo "Failed to delete newsletter: " . $e->getMessage();
+            }
+    }
+    public function save()
+    {
+        try {        
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("INSERT INTO Newsletter (title, body, creatorId, publishedstate) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$this->title, $this->body, $this->creatorId,$this->getIntState()]);
+        echo "Saving newsletter.\n";}
+        catch (Exception $e) {
+            echo "Failed to save newsletter: " . $e->getMessage();
+        }
     }
 }
 

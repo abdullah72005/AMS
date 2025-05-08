@@ -2,7 +2,6 @@
 
 require_once 'Event.php';
 require_once 'User.php';
-require_once __DIR__ . '/Newsletter.php';
 class FacultyStaff extends User{
 
     public function __construct($username)
@@ -128,8 +127,8 @@ class FacultyStaff extends User{
             return "Failed to get donations: " . $e->getMessage();
         }
     }
-    public function createNewsletter($title, $description,  $state) {
-        new Newsletter($title, $description,  $state);
+    public function createNewsletter($title, $body,  $state) {
+        return new Newsletter($this->getId(), $title,  $body, $state);
     }
     public function getNewsletter($id) {
         // init db
