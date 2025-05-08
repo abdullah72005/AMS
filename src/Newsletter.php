@@ -94,7 +94,36 @@ class Newsletter
             echo "Failed to save newsletter: " . $e->getMessage();
         }
     }
-
+    public static function getNewsletter($id)
+    {
+        try {        
+            $dbCnx = require('db.php');
+            $stmt = $dbCnx->prepare("SELECT * FROM Newsletter WHERE newsletter_id = ? order by newsletter_id DESC");
+            $stmt->execute([$id]);
+            $newsletter = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($newsletter) {
+                return new Newsletter($newsletter['creatorId'], $newsletter['title'], $newsletter['body'], new PublishedState(), $newsletter['newsletter_id']);
+            } else {
+                throw new Exception("Newsletter not found.");
+            }
+        } catch (Exception $e) {
+            echo "Failed to get newsletter: " . $e->getMessage();
+        }
+    }
+    public static function getPublishedNewsletters()
+    {
+        try {        
+            $dbCnx = require('db.php');
+            $stmt = $dbCnx->prepare("SELECT * FROM Newsletter where publishedState = 1 order by newsletter_id DESC ");
+            $stmt->execute();
+            $newsletters = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map(function ($newsletter) {
+                return new Newsletter($newsletter['creatorId'], $newsletter['title'], $newsletter['body'], new PublishedState(), $newsletter['newsletter_id']);
+            }, $newsletters);
+        } catch (Exception $e) {
+            echo "Failed to get newsletters: " . $e->getMessage();
+        }
+    }
 
 }
 

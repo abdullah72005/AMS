@@ -1,5 +1,12 @@
 <?php 
+
+ if (!isset($_SESSION['loggedin']) || $_SESSION['role'] != 'Alumni'){        
+    echo "You are not allowed to make a donation.  ";
+    exit;
+} 
 $user = $_SESSION['userObj'];
+
+
 $donations = $user->getDonations();
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $amount = $_POST['amount'];
@@ -10,10 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 }
 
 
-else if (!isset($_SESSION['loggedin']) || User::getRole($_SESSION['username']) != 'Alumni'){        
-    echo "You are not allowed to make a donation.  ";
-    exit;
-} 
+
 
 else {
     ?>

@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $newsletter = $user->createNewsletter($title, $description, $state);
         $id = $newsletter->save();
     }
-    header("Location: /newsletter.php?id=" . $id);
+    header("Location: templates/newsletter.php?id=" . $id);
     exit;
 }
 ?>    
