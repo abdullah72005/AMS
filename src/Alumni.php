@@ -31,17 +31,7 @@ class Alumni extends User
         }
         
         $this->updateMentorStatus(true);
-        new Mentorship($this->getID()); // Create mentorship relationship
-    }
-
-    public function getMentorship(): ?Mentorship 
-    {
-        try {
-            return new Mentorship($this->getID());
-        } 
-        catch (Exception $e) {
-            return null;
-        }
+        new Mentorship($this->getID()); 
     }
 
     public function updateMentorStatus($newMentorStatus)
@@ -61,10 +51,11 @@ class Alumni extends User
         return $this->verfied;
     }
 
-    public function updateFieldOfstudy()
+    public function setFieldOfstudy($fieldOfStudy)
     {
         $stmt = $this->dbCnx->prepare("UPDATE Alumni SET major = ? WHERE userId = ?");
-        $stmt->execute([$this->fieldOfstudy, $this->getId()]);
+        $stmt->execute([$fieldOfStudy, $this->getId()]);
+        $this->fieldOfstudy = $fieldOfStudy;
     }
 
     public function getFieldOfStudy()
