@@ -118,7 +118,16 @@ class FacultyStaff extends User{
 
         $_SESSION['userObj'] = $this;
     }
-
+    public function getAllDonations(){
+    try {        
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT * FROM donation");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);}
+        catch (Exception $e) {
+            return "Failed to get donations: " . $e->getMessage();
+        }
+    }
 }
 
 ?>
