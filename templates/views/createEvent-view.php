@@ -17,8 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         $manager = new FacultyStaff($_SESSION['username']);
         $eventId = $manager->scheduleEvent($title, $description, $date);
-        $_SESSION['eventId'] = $eventId; // Store event ID in session for later use
-        header("Location: eventPage.php");
+        header("Location: eventPage.php/?eventId=$eventId");
         exit;
     } catch (Exception $e) {
         $errorMsg = $e->getMessage();

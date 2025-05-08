@@ -2,10 +2,13 @@
 require_once("../src/Event.php");
 require_once("../src/FacultyStaff.php");
 
-
+if($_GET['eventId'] == null) {
+    //if you're here show all events
+}
+//if you're here show the event using the GET id variable
 $manager = new FacultyStaff($_SESSION['username']);
 
-$event = Event::getEventById($_SESSION['eventId']);
+$event = Event::getEventById($_GET['eventId'] );
 if (!$event) {
     throw new Exception("Event not found.");
 }
