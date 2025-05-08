@@ -36,6 +36,37 @@ class Alumni extends User
         }
 
     }
+
+
+    public function signupForEvent(int $eventId): void {
+        // check if event exists
+        $stmt = $this->dbCnx->prepare("SELECT eventId FROM `Event` WHERE eventId = ?");
+        $stmt->execute([$eventId]);
+        $eventId = $stmt->fetchColumn();
+        if (!$eventId) {
+            throw new Exception("Event with this ID does not exist.");
+        }
+
+        // check if user is already signed up
+        $stmt = $this->dbCnx->prepare("SELECT participant_id FROM EventParticipant WHERE event_id = ? AND participant_id = ?");
+        $stmt->execute([$eventId, $this->getId()]);
+        $participantId = $stmt->fetchColumn();  
+        if ($participantId) {
+            throw new Exception("You are already signed up for this event.");
+        }
+
+        // check if event is in the past
+        $stmt = $this->dbCnx->prepare("SELECT date FROM `Event` WHERE eventId = ?");
+        $stmt->execute([$eventId]);
+        $eventDate = $stmt->fetchColumn();
+        $currentDate = new DateTime();
+        if ($eventDate <= $currentDate) {
+            throw new Exception("Event date cannot be in the past.");
+        }
+
+        $stmt = $this->dbCnx->prepare("INSERT INTO EventParticipant (event_id, participant_id) VALUES (?, ?)");
+        $stmt->execute([$eventId, $this->getId()]);
+    }
     
 }
 

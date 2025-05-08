@@ -6,19 +6,44 @@ class Event {
     private string $description;
     private DateTime $date;
     private int $creatorId;
-    private array $participantsId;
+    private $dbCnx;
 
-    // Constructs a new Event instance.
-    public function __construct(int $eventId, string $name, string $description, DateTime $date, int $creatorId) {
-        $this->eventId = $eventId;
+    public function __construct($name, $description, $date){
         $this->name = $name;
         $this->description = $description;
         $this->date = $date;
-        $this->creatorId = $creatorId;
-        $this->participantsId = [];
+        $this->dbCnx=require("db.php");    
+
+        // check if event is already created
+        $stmt = $this->dbCnx->prepare("SELECT eventId FROM `Event` WHERE name = ?");
+        $stmt->execute([$this->name]);
+        $eventId = $stmt->fetchColumn();
+        if ($eventId) {
+            $this->eventId = $eventId;
+
+            // get creatorId
+            $stmt = $this->dbCnx->prepare("SELECT creatorId FROM `Event` WHERE name = ?");
+            $stmt->execute([$this->name]);
+            $creatorId = $stmt->fetchColumn();
+            $this->creatorId = $creatorId;
+        }
+
+
     }
-//getters
+
+    public function addEvent($creatorId){
+        $this->creatorId=$creatorId;
+        $stmt = $this->dbCnx->prepare("INSERT INTO `Event` (name, description, date, creatorId) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$this->name, $this->description, $this->date->format('y-m-d H:i:s'), $this->creatorId]);
+        
+        $this->eventId = (int)$this->dbCnx->lastInsertId();
+        return $this->eventId;
+    }
+
     public function getEventId(): int {
+        if (!isset($this->eventId)) {
+            throw new Exception("This event has not been added to db yet.");
+        }
         return $this->eventId;
     }
 
@@ -31,35 +56,44 @@ class Event {
     }
 
     public function getMadeBy(): string {
+        if (!isset($this->creatorId)) {
+            throw new Exception("This event has not been added to db yet.");
+        }
         return (string)$this->creatorId;
     }
-//setters
-    private function setEventId(int $eventId): void {
+
+
+
+
+    public static function getEvents() {
+        // Get DB connection (assuming db.php returns a PDO instance)
+        $dbCnx = require('db.php');
+
+        $stmt = $dbCnx->prepare("SELECT eventId FROM `Event`");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    public function addParticipant($alumniId) {
+        // get event id 
+        $stmt = $this->dbCnx->prepare("SELECT event_id FROM `Event` WHERE name = ?");
+        $stmt->execute([$this->name]);
+        $eventId = $stmt->fetchColumn();
+        if (!$eventId) {
+            throw new Exception("Event not found.");
+        }
         $this->eventId = $eventId;
-    }
-    public function setDate(DateTime $date): void {
-        $this->date = $date;
-    }
-
-    public function setName(string $name): void {
-        $this->name = $name;
+        $stmt = $this->dbCnx->prepare("INSERT INTO EventParticipant (event_id, participant_id) VALUES (?, ?)");
+        $stmt->execute([$this->eventId, $alumniId]);
     }
 
-    public function setDescription(string $description): void {
-        $this->description = $description;
+    public static function getEventById($eventId) {
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT * FROM `Event` WHERE eventId = ?");
+        $stmt->execute([$eventId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function setCreator(string $creator): void {
-        $this->creatorId = (int)$creator;
-    }
-// Adds a participant to the event.
-    public function addParticipant(int $participantId): void {
-        $this->participantsId[] = $participantId;
-    }
-//gets the participants of the event.
-    public function getParticipants(): array {
-        return $this->participantsId;
-    }
 }
 
 ?>
