@@ -2,7 +2,6 @@
 
 require_once 'Event.php';
 require_once 'User.php';
-
 class FacultyStaff extends User{
 
     public function __construct($username)
@@ -127,7 +126,42 @@ class FacultyStaff extends User{
 
         $_SESSION['userObj'] = $this;
     }
+    public function getAllDonations(){
+    try {        
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT * FROM donation order by donation_id desc");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);}
+        catch (Exception $e) {
+            return "Failed to get donations: " . $e->getMessage();
+        }
+    }
+    public function createNewsletter($title, $body,  $state, $id = null) {
+        return new Newsletter($this->getId(), $title,  $body, $state, $id);
+    }
+    public function getNewsletter($id) {
+        // init db
+        try {        
+            $dbCnx = require('db.php');
+            $stmt = $dbCnx->prepare("SELECT * FROM Newsletter WHERE Newsletter_id = ?");
+            $stmt->execute([$id]);
+            $res = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$res) {
+                throw new Exception("Newsletter not found.");
+            }
+            if ($res['publishedState'] === 0) {
+                $state = new DraftState();
+            } else {
+                $state = new PublishedState();
+            }
+            $newsletter = new Newsletter($res['creatorId'], $res['title'], $res['body'],$state,$id);
+            return $newsletter;
+        }
+        catch (Exception $e) {
+            return $e;
+        }
 
+    }
 }
 
 ?>

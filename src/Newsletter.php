@@ -6,13 +6,13 @@ class Newsletter
     private $body;
     private $creatorId;
     private $state;
-    public function __construct($id, $title = null, $body = null, $creatorId)
+    public function __construct($creatorId , $title = null, $body = null,State  $state = new DraftState(), $id = null)
     {
-        $this->id = $id;
         $this->title = $title;
         $this->body = $body;
         $this->creatorId = $creatorId;
-        $this->state = new DraftState();
+        $this->state = $state;
+        $this->id = $id;
     }
     public function getId()
     {
@@ -30,6 +30,22 @@ class Newsletter
     {
         return $this->creatorId;
     }
+    public function getIntState()
+    {
+        if ($this->state instanceof DraftState) {
+            return 0;
+        } elseif ($this->state instanceof PublishedState) {
+            return 1;
+        }
+    }
+    public function getStringState()
+    {
+        if ($this->state instanceof DraftState) {
+            return 'DraftState';
+        } else if ($this->state instanceof PublishedState) {
+            return 'PublishedState';
+        }
+    }
     public function editTitle($title)
     {
         $this->state->edit($this, 'title', $title);
@@ -46,10 +62,105 @@ class Newsletter
     {
         $this->body = $body;
     }
-    public function setTitle($title)
+    protected function setTitle($title)
     {
         $this->title = $title;
     }
+    public function setState(State $state)
+    {
+        $this->state = $state;
+    }
+    public static function delete($id)
+    {
+        try {        
+            $dbCnx = require('db.php');
+            $stmt = $dbCnx->prepare("DELETE FROM Newsletter WHERE Newsletter_id = (?)");
+            $stmt->execute([$id]);
+            echo "Deleting newsletter.\n";}
+            catch (Exception $e) {
+                echo "Failed to delete newsletter: " . $e->getMessage() . $id;
+            }
+    }
+    public function save()
+    {
+        if ($this->getId() != null) {
+            try {        
+                $dbCnx = require('db.php');
+                $stmt = $dbCnx->prepare("UPDATE Newsletter SET title = ?, body = ?, publishedState = ? WHERE newsletter_id = ?");
+                $stmt->execute([$this->title, $this->body, $this->getIntState(), $this->id]);
+                return$dbCnx->lastInsertId();
+            } catch (Exception $e) {
+                return "Failed to update newsletter: " . $e->getMessage();
+            }
+        } else {
+            try {        
+                $dbCnx = require('db.php');
+                $stmt = $dbCnx->prepare("INSERT INTO Newsletter (title, body, creatorId, publishedstate) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$this->title, $this->body, $this->creatorId,$this->getIntState()]);
+                $this->id = $dbCnx->lastInsertId();
+                return $dbCnx->lastInsertId();
+                }
+                catch (Exception $e) {
+                    return "Failed to save newsletter: " . $e->getMessage();
+                }
+        }
+    }
+
+    
+    public static function getNewsletter($id)
+    {
+        try {        
+            $dbCnx = require('db.php');
+            $stmt = $dbCnx->prepare("SELECT * FROM Newsletter WHERE newsletter_id = ? order by newsletter_id DESC");
+            $stmt->execute([$id]);
+            $newsletter = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($newsletter['publishedState'] == 0) {
+                $state = new DraftState();
+            } else {
+                $state = new PublishedState();
+            }
+            if ($newsletter) {
+                return new Newsletter($newsletter['creatorId'], $newsletter['title'], $newsletter['body'], $state, $newsletter['newsletter_id']);
+            } else {
+                throw new Exception("Newsletter not found.");
+            }
+        } catch (Exception $e) {
+            echo "Failed to get newsletter: " . $e->getMessage();
+        }
+    }
+
+
+    public static function getPublishedNewsletters()
+    {
+        try {        
+            $dbCnx = require('db.php');
+            $stmt = $dbCnx->prepare("SELECT * FROM Newsletter where publishedState = 1 order by newsletter_id DESC ");
+            $stmt->execute();
+            $newsletters = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map(function ($newsletter) {
+                return new Newsletter($newsletter['creatorId'], $newsletter['title'], $newsletter['body'], new PublishedState(), $newsletter['newsletter_id']);
+            }, $newsletters);
+        } catch (Exception $e) {
+            echo "Failed to get newsletters: " . $e->getMessage();
+        }
+    }
+
+
+    public static function getDraftedNewsletters()
+    {
+        try {        
+            $dbCnx = require('db.php');
+            $stmt = $dbCnx->prepare("SELECT * FROM Newsletter where publishedState = 0 order by newsletter_id DESC ");
+            $stmt->execute();
+            $newsletters = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map(function ($newsletter) {
+                return new Newsletter($newsletter['creatorId'], $newsletter['title'], $newsletter['body'], new DraftState(), $newsletter['newsletter_id']);
+            }, $newsletters);
+        } catch (Exception $e) {
+            echo "Failed to get newsletters: " . $e->getMessage();
+        }
+    }
+
 }
 
 

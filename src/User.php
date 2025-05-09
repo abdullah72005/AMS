@@ -179,6 +179,7 @@ abstract class User
 
 
 
+
    
 
 
@@ -204,7 +205,6 @@ abstract class User
 
         return $role ?: null;
     }
-
 }
 
 
