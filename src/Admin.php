@@ -172,4 +172,19 @@ class Admin extends User
 
         $_SESSION['userObj'] = $this;
     }
+
+
+    public static function getAllUserData($userId)
+    {
+        $arr1 = parent::getAllUserData($userId);
+
+        // init db
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT * FROM `Admin` WHERE user_id = :user_id");
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->execute();
+        $arr2 = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return array_merge($arr1, $arr2);
+    }
 }

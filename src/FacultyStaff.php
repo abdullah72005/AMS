@@ -55,10 +55,20 @@ class FacultyStaff extends User{
         // init db
         $dbCnx = require('db.php');
 
-        $stmt = $dbCnx->prepare("SELECT participant_id FROM EventParticipant WHERE event_id = ?");
+        $stmt = $dbCnx->prepare("
+            SELECT u.username 
+            FROM EventParticipant ep
+            INNER JOIN User u ON ep.participant_id = u.user_id
+            WHERE ep.event_id = ?
+            ");
         $stmt->execute([$eventId]);
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        // Fetch all usernames as an array
+        $usernames = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        return $usernames;
     }
+        
 
     public function deleteEvent(int $eventId) {
         // init db
@@ -117,6 +127,21 @@ class FacultyStaff extends User{
         parent::login_user($password);
 
         $_SESSION['userObj'] = $this;
+    }
+
+
+    public static function getAllUserData($userId)
+    {
+        $arr1 = parent::getAllUserData($userId);
+
+        // init db
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT * FROM `FacultyStaff` WHERE user_id = :user_id");
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->execute();
+        $arr2 = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return array_merge($arr1, $arr2);
     }
 
 }
