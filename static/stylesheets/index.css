@@ -1,0 +1,92 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    min-height: 100vh;
+  }
+
+  .glass-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 1100px;
+    width: 95%;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    margin: 40px auto;
+  }
+
+  .glass-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    transition: 0.3s ease;
+  }
+
+  .card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .btn-custom {
+    border-radius: 30px;
+    padding: 8px 24px;
+    font-weight: 500;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 30px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+  }
+
+  .navbar {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .navbar a,
+  .navbar form button {
+    color: white !important;
+  }
+
+  .navbar .form-control {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+  }
+
+  .navbar .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .navbar .btn-outline-success {
+    border-color: white;
+    color: white;
+  }
+
+  .navbar .btn-outline-success:hover {
+    background-color: white;
+    color: #198754;
+  }
+
+  .navbar .btn-outline-danger {
+    border-color: white;
+    color: white;
+  }
+
+  .navbar .btn-outline-danger:hover {
+    background-color: white;
+    color: #dc3545;
+  }
