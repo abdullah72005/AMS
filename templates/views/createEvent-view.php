@@ -1,11 +1,13 @@
 <?php 
-require_once("../src/FacultyStaff.php");
+
 $successMsg = "";
 $errorMsg = "";
+$manager=$_SESSION['userObj'];
 
 //check if user is FacultyStaff role
-if (User::getRole($_SESSION['username']) !== 'FacultyStaff') {
-    throw new Exception("You do not have permission to create an event.");
+if (!isset($_SESSION['userObj']) || !($_SESSION['userObj'] instanceof FacultyStaff)) {
+    header("Location: index.php");
+    exit();
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -15,10 +17,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $date = new DateTime($_POST['date']);
 
         
-        $manager = new FacultyStaff($_SESSION['username']);
+        
         $eventId = $manager->scheduleEvent($title, $description, $date);
         header("Location: eventPage.php/?eventId=$eventId");
-        exit;
+        exit();
     } catch (Exception $e) {
         $errorMsg = $e->getMessage();
     }

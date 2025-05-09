@@ -1,8 +1,9 @@
 <?php
 require_once("../src/User.php");
 require_once("../src/FacultyStaff.php");
+require_once("../src/Alumni.php");
 require_once("../src/Event.php");
-$childView = 'views/createEvent-view.php';
-$titleView = 'Create Event';
+$childView = 'views/eventTable-view.php';
+$titleView = 'Events Page';
 include_once('layout.php');
 ?>
