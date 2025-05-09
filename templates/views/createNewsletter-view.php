@@ -9,18 +9,25 @@ if ($_SESSION['role'] !== 'FacultyStaff') {
 if (isset($_GET['id']) && $_GET['id'] !== '') {
     try {
         $newsletter = $user->getNewsletter($_GET['id']);
+        if ($newsletter instanceof Exception) {
+            echo "Failed to get newsletter: " . $newsletter->getMessage();
+            exit;
+        }
+
     } catch (Exception $e) {
         echo "Failed to get newsletter: " . $e->getMessage();
         exit;
     }
 }
-if ($newsletter->getIntState() === 1) {
-        echo "You cannot edit a published newsletter.";
-        exit;} 
+if ($newsletter->getIntState() == 1) {
+    echo "You cannot edit a published newsletter.";
+    exit;
+} 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'];
     $description = $_POST['description'];
     $state = $_POST['state'];
+    $id = $_POST['id'];
     switch ($state) {
         case 'draft':
             $state = new DraftState();
@@ -29,22 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $state = new PublishedState();
             break;
     }
-
     if ($state === 'delete') {
         $newsletter->delete();
         exit;
     }
-    if (isset($newsletter)) {
-        echo $state;
-        $newsletter->editTitle($title);
-        $newsletter->editBody($description);
-        $newsletter->setState($state);
-        $newsletter->save();
-    } else {
-        $newsletter = $user->createNewsletter($title, $description, $state);
-        $id = $newsletter->save();
-    }
-    header("Location: templates/newsletter.php?id=" . $id);
+    $newsletter = $user->createNewsletter($title, $description, $state, $id);
+    
+    echo $newsletter->save();
     exit;
 }
 ?>    
@@ -58,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <h2 class="mb-4 text-center">Create a New newsletter</h2>
 
                         <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+                            <input type="hidden" id="id" name="id" value="<?= isset($_GET['id']) ? $_GET['id'] : null ?>">
                             <div class="mb-3">
                                 <label for="title" class="form-label">newsletter Title</label>
                                 <input type="text" class="form-control" id="title" name="title" value="<?= isset($newsletter) ? $newsletter->getTitle() : '' ?>" required>
@@ -71,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="mb-3 d-flex gap-2">
                                 <button type="submit" name="state" value="draft" class="btn btn-primary flex-grow-1">Draft Newsletter</button>
                                 <button type="submit" name="state" value="publish" class="btn btn-secondary flex-grow-1">Publish Newsletter</button>
-                                <buton type="submit" name="state" value="delete" class="btn btn-danger flex-grow-1">Delete Newsletter</button>
+                                <button  type="submit" name="state" value="delete" class="btn btn-danger flex-grow-1">Delete Newsletter</button>
                             </div>
                         </form>
                     </div>

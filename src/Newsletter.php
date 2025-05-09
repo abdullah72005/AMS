@@ -83,17 +83,30 @@ class Newsletter
     }
     public function save()
     {
-        try {        
-        $dbCnx = require('db.php');
-        $stmt = $dbCnx->prepare("INSERT INTO Newsletter (title, body, creatorId, publishedstate) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$this->title, $this->body, $this->creatorId,$this->getIntState()]);
-        $this->id = $dbCnx->lastInsertId();
-        return $this->getId();
-        }
-        catch (Exception $e) {
-            echo "Failed to save newsletter: " . $e->getMessage();
+        if ($this->getId() != null) {
+            try {        
+                $dbCnx = require('db.php');
+                $stmt = $dbCnx->prepare("UPDATE Newsletter SET title = ?, body = ?, publishedState = ? WHERE newsletter_id = ?");
+                $stmt->execute([$this->title, $this->body, $this->getIntState(), $this->id]);
+                return$dbCnx->lastInsertId();
+            } catch (Exception $e) {
+                return "Failed to update newsletter: " . $e->getMessage();
+            }
+        } else {
+            try {        
+                $dbCnx = require('db.php');
+                $stmt = $dbCnx->prepare("INSERT INTO Newsletter (title, body, creatorId, publishedstate) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$this->title, $this->body, $this->creatorId,$this->getIntState()]);
+                $this->id = $dbCnx->lastInsertId();
+                return $dbCnx->lastInsertId();
+                }
+                catch (Exception $e) {
+                    return "Failed to save newsletter: " . $e->getMessage();
+                }
         }
     }
+
+    
     public static function getNewsletter($id)
     {
         try {        
@@ -110,6 +123,8 @@ class Newsletter
             echo "Failed to get newsletter: " . $e->getMessage();
         }
     }
+
+
     public static function getPublishedNewsletters()
     {
         try {        
@@ -124,6 +139,8 @@ class Newsletter
             echo "Failed to get newsletters: " . $e->getMessage();
         }
     }
+
+
     public static function getDraftedNewsletters()
     {
         try {        

@@ -127,23 +127,31 @@ class FacultyStaff extends User{
             return "Failed to get donations: " . $e->getMessage();
         }
     }
-    public function createNewsletter($title, $body,  $state) {
-        return new Newsletter($this->getId(), $title,  $body, $state);
+    public function createNewsletter($title, $body,  $state, $id = null) {
+        return new Newsletter($this->getId(), $title,  $body, $state, $id);
     }
     public function getNewsletter($id) {
         // init db
-        $dbCnx = require('db.php');
-
-        $stmt = $dbCnx->prepare("SELECT * FROM Newsletter WHERE Newsletter_id = ?");
-        $stmt->execute([$id]);
-        $res = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($res['publishedState'] === 0) {
-            $state = new DraftState();
-        } else {
-            $state = new PublishedState();
+        try {        
+            $dbCnx = require('db.php');
+            $stmt = $dbCnx->prepare("SELECT * FROM Newsletter WHERE Newsletter_id = ?");
+            $stmt->execute([$id]);
+            $res = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$res) {
+                throw new Exception("Newsletter not found.");
+            }
+            if ($res['publishedState'] === 0) {
+                $state = new DraftState();
+            } else {
+                $state = new PublishedState();
+            }
+            $newsletter = new Newsletter($res['creatorId'], $res['title'], $res['body'],$state,$id);
+            return $newsletter;
         }
-        $newsletter = new Newsletter($res['creatorId'], $res['title'], $res['body'],$state);
-        return $newsletter;
+        catch (Exception $e) {
+            return $e;
+        }
+
     }
 }
 
