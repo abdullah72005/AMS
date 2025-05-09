@@ -1,6 +1,6 @@
 <?php 
 
- if (!isset($_SESSION['loggedin']) || $_SESSION['role'] != 'Alumni'){        
+if (!isset($_SESSION['loggedin']) || $_SESSION['role'] != 'Alumni'){        
     echo "You are not allowed to make a donation.  ";
     exit;
 } 

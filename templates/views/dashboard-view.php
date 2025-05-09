@@ -22,7 +22,7 @@ catch (Exception $e){
                 <div class="card p-3 h-100">
                 <h5 class="card-title">📝 My Profile</h5>
                 <p class="card-text">View and update your personal information.</p>
-                <a href="profile.php" class="btn btn-light text-primary btn-custom mt-auto">View Profile</a>
+                <a href="profilepage.php?profileId=<?= $user->getId() ?>" class="btn btn-light text-primary btn-custom mt-auto">View Profile</a>
                 </div>
             </div>
 
@@ -49,7 +49,7 @@ catch (Exception $e){
                 <div class="card p-3 h-100">
                 <h5 class="card-title">📅 Events</h5>
                 <p class="card-text">Check and join upcoming events.</p>
-                <a href="events.php" class="btn btn-light text-info btn-custom mt-auto">View Events</a>
+                <a href="eventtable.php" class="btn btn-light text-info btn-custom mt-auto">View Events</a>
                 </div>
             </div>
 
@@ -58,7 +58,7 @@ catch (Exception $e){
                 <div class="card p-3 h-100">
                 <h5 class="card-title">📰 Newsletters</h5>
                 <p class="card-text">Read latest or archived newsletters.</p>
-                <a href="newsletters.php" class="btn btn-light text-danger btn-custom mt-auto">Newsletters</a>
+                <a href="newsletter.php" class="btn btn-light text-danger btn-custom mt-auto">Newsletters</a>
                 </div>
             </div>
         </div>
@@ -79,7 +79,7 @@ catch (Exception $e){
                 <div class="card p-3 h-100">
                 <h5 class="card-title">🧾 Verify Users</h5>
                 <p class="card-text">Review and approve pending accounts.</p>
-                <a href="verify_users.php" class="btn btn-light text-primary btn-custom mt-auto">View</a>
+                <a href="verifyAlumni.php" class="btn btn-light text-primary btn-custom mt-auto">View</a>
                 </div>
             </div>
 
@@ -88,7 +88,7 @@ catch (Exception $e){
                 <div class="card p-3 h-100">
                 <h5 class="card-title">📅 Schedule Event</h5>
                 <p class="card-text">Create new university/alumni events.</p>
-                <a href="schedule_event.php" class="btn btn-light text-success btn-custom mt-auto">Schedule</a>
+                <a href="createEvent.php" class="btn btn-light text-success btn-custom mt-auto">Schedule</a>
                 </div>
             </div>
             <!-- Reschedule Event -->
@@ -96,32 +96,35 @@ catch (Exception $e){
                 <div class="card p-3 h-100">
                 <h5 class="card-title"> Edit Event</h5>
                 <p class="card-text">Update details of existing events.</p>
-                <a href="reschedule_event.php" class="btn btn-light text-danger btn-custom mt-auto">Edit</a>
+                <a href="eventTable.php" class="btn btn-light text-danger btn-custom mt-auto">Edit</a>
                 </div>
             </div>
 
             <!-- Draft Newsletter -->
             <div class="col">
                 <div class="card p-3 h-100">
-                <h5 class="card-title">📰 Draft Newsletter</h5>
+                <h5 class="card-title">📰 create Newsletter</h5>
                 <p class="card-text">Write and publish alumni newsletters.</p>
-                <a href="draft_newsletter.php" class="btn btn-light text-warning btn-custom mt-auto">Draft</a>
+                <div class="mb-3 d-flex gap-2">
+                    <a href="createNewsletter.php" class="btn btn-light text-warning btn-custom flex-grow-1">create</a>
+                    <a href="newsletterdrafts.php" class="btn btn-light text-warning btn-custom flex-grow-1">ViewDrafts</a>
+                </div>
                 </div>
             </div>
-
+            <!-- View Newsletter -->
             <!-- Donation History -->
             <div class="col">
                 <div class="card p-3 h-100">
                 <h5 class="card-title">💸 View Donations </h5>
                 <p class="card-text">View records of alumni donations.</p>
-                <a href="donation_history.php" class="btn btn-light text-info btn-custom mt-auto">View</a>
+                <a href="allDonations.php" class="btn btn-light text-info btn-custom mt-auto">View</a>
                 </div>
             </div>
         <div class="col">
                 <div class="card p-3 h-100">
                 <h5 class="card-title">📝 My Profile</h5>
                 <p class="card-text">View and update your personal information.</p>
-                <a href="profile.php" class="btn btn-light text-primary btn-custom mt-auto">View Profile</a>
+                <a href="profilepage.php?profileId=<?= $user->getId() ?>" class="btn btn-light text-primary btn-custom mt-auto">View Profile</a>
                 </div>
             </div>
             
@@ -146,7 +149,7 @@ catch (Exception $e){
                 <div class="card p-3 h-100">
                 <h5 class="card-title">Available Mentorship Programs</h5>
                 <p class="card-text">Explore available mentorship programs for you.</p>
-                <a href="apply_mentorship.php" class="btn btn-light text-primary btn-custom mt-auto">View Programs</a>
+                <a href="joinMentorship.php" class="btn btn-light text-primary btn-custom mt-auto">View Programs</a>
                 </div>
             </div>
 
@@ -155,7 +158,7 @@ catch (Exception $e){
                 <div class="card p-3 h-100">
                 <h5 class="card-title">Latest Newsletters</h5>
                 <p class="card-text">Stay updated with the latest newsletters from the Alumni system.</p>
-                <a href="view_newsletters.php" class="btn btn-light text-warning btn-custom mt-auto">Read Newsletters</a>
+                <a href="newsletter.php" class="btn btn-light text-warning btn-custom mt-auto">Read Newsletters</a>
                 </div>
             </div>
 
@@ -164,7 +167,7 @@ catch (Exception $e){
                 <div class="card p-3 h-100">
                 <h5 class="card-title">📝 My Profile</h5>
                 <p class="card-text">View and update your personal information.</p>
-                <a href="profile.php" class="btn btn-light text-primary btn-custom mt-auto">View Profile</a>
+                <a href="profilepage.php?profileId=<?= $user->getId() ?>" class="btn btn-light text-primary btn-custom mt-auto">View Profile</a>
                 </div>
             </div>
             </div>

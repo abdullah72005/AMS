@@ -13,10 +13,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $user = new Alumni($username);
         } elseif ($role == "Student") {
             $user = new Student($username);
-        } elseif ($role == "FacultyStaff") {
-            $user = new FacultyStaff($username);
-        } elseif ($role == "Admin") {
-            $user = new Admin($username);
         } else {
             throw new Exception("Invalid role selected.");
             exit();
@@ -69,8 +65,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <option value="">Select a role</option>
                         <option value="Alumni">Alumni</option>
                         <option value="Student">Student</option>
-                        <option value="FacultyStaff">Faculty Staff</option>
-                        <option value="Admin">Admin</option>
                     </select>
                 </div>
 
