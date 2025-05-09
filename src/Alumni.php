@@ -66,7 +66,7 @@ class Alumni extends User
         $stmt->execute([$eventId]);
         $eventDate = $stmt->fetchColumn();
         $currentDate = new DateTime();
-        if ($eventDate <= $currentDate) {
+        if ($eventDate > $currentDate) {
             throw new Exception("Event date cannot be in the past.");
         }
 

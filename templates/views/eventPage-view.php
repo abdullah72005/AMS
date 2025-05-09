@@ -1,50 +1,71 @@
 <?php
-require_once("../src/Event.php");
-require_once("../src/FacultyStaff.php");
 
-if($_GET['eventId'] == null) {
-    //if you're here show all events
+
+$manager = $_SESSION['userObj'] ?? null;
+$userType = $manager ? User::getRole($manager->getUsername()) : null;
+
+if (!isset($_GET['eventId']) || empty($_GET['eventId'])) {
+    echo "<div class='container mt-4 alert alert-warning'>No event selected.</div>";
+    exit;
 }
-//if you're here show the event using the GET id variable
-$manager = new FacultyStaff($_SESSION['username']);
 
-$event = Event::getEventById($_GET['eventId'] );
-if (!$event) {
-    throw new Exception("Event not found.");
+$successMsg = '';
+$errorMsg = '';
+
+try {
+    $eventId = (int)$_GET['eventId'];
+    $event = Event::getEventById($eventId);
+
+    if (!$event) {
+        throw new Exception("Event not found.");
+    }
+
+    $eventName = $event['name'];
+    $eventDescription = $event['description'];
+    $eventDate = new DateTime($event['date']);
+    $eventObject = new Event($eventName, $eventDescription, $eventDate);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userType === 'Alumni') {
+        try {
+            $manager->signupForEvent($eventId);
+            $successMsg = "You have successfully joined the event.";
+        } catch (Exception $e) {
+            $errorMsg = "Could not join event: " . $e->getMessage();
+        }
+    }
+
+    if ($userType === 'FacultyStaff') {
+        $participants = $manager->getEventParticipants($eventId);
+    }
+
+} catch (Exception $e) {
+    echo "<div class='container mt-4 alert alert-danger'>Error: " . htmlspecialchars($e->getMessage()) . "</div>";
+    exit;
 }
-$eventName =$event['name'];
-$eventDescription = $event['description'];
-$eventDate = new DateTime($event['date']);
-
-$eventObject = new Event($eventName, $eventDescription, $eventDate);
-
-
-// Simulate user type: 'alumni' or 'facultyStaff'
-$userType = $_SESSION['role']; // change to 'alumni' to test the other view
-
-// Dummy participant list
-$participants = $manager->getEventParticipants($_SESSION['eventId']);
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Event Details</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
 <div class="container py-5">
+    <?php if ($successMsg): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?php echo htmlspecialchars($successMsg); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php elseif ($errorMsg): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?php echo htmlspecialchars($errorMsg); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
     <div class="card shadow rounded-4">
         <div class="card-body p-4">
-            <h2 class="text-center mb-4"><?php echo htmlspecialchars($event['name']); ?></h2>
+            <h2 class="text-center mb-4"><?php echo htmlspecialchars($eventName); ?></h2>
 
             <table class="table table-bordered">
                 <tbody>
                     <tr>
                         <th scope="row">Description</th>
-                        <td><?php echo htmlspecialchars($event['description']); ?></td>
+                        <td><?php echo htmlspecialchars($eventDescription); ?></td>
                     </tr>
                     <tr>
                         <th scope="row">Date</th>
@@ -54,9 +75,11 @@ $participants = $manager->getEventParticipants($_SESSION['eventId']);
             </table>
 
             <div class="text-center mt-4">
-                <?php if ($userType === 'alumni'): ?>
-                    <button class="btn btn-success">Join Event</button>
-                <?php elseif ($userType === 'facultyStaff'): ?>
+                <?php if ($userType === 'Alumni'): ?>
+                    <form method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-success">Join Event</button>
+                    </form>
+                <?php elseif ($userType === 'FacultyStaff'): ?>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#participantsModal">
                         Show Participants
                     </button>
@@ -66,6 +89,8 @@ $participants = $manager->getEventParticipants($_SESSION['eventId']);
     </div>
 </div>
 
+<?php if ($userType === 'FacultyStaff'): ?>
+    
 <!-- Modal for Faculty/Staff -->
 <div class="modal fade" id="participantsModal" tabindex="-1" aria-labelledby="participantsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -88,8 +113,4 @@ $participants = $manager->getEventParticipants($_SESSION['eventId']);
         </div>
     </div>
 </div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php endif; ?>

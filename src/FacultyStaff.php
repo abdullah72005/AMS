@@ -52,15 +52,23 @@ class FacultyStaff extends User{
     }
 
     public function getEventParticipants($eventId) {
-        // init db
-        $dbCnx = require('db.php');
+            // init db
+            $dbCnx = require('db.php');
+    
+            $stmt = $dbCnx->prepare("
+                SELECT u.username 
+                FROM EventParticipant ep
+                INNER JOIN User u ON ep.participant_id = u.user_id
+                WHERE ep.event_id = ?
+                ");
+            $stmt->execute([$eventId]);
+    
+            // Fetch all usernames as an array
+            $usernames = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    
+            return $usernames;}
 
-        $stmt = $dbCnx->prepare("SELECT participant_id FROM EventParticipant WHERE event_id = ?");
-        $stmt->execute([$eventId]);
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
-    }
-
-    public function deleteEvent(int $eventId) {
+    public static function deleteEvent(int $eventId) {
         // init db
         $dbCnx = require('db.php');
 
@@ -78,8 +86,7 @@ class FacultyStaff extends User{
         // check if event exists with this name
         $stmt = $dbCnx->prepare("SELECT eventId FROM `Event` WHERE name = ?");
         $stmt->execute([$newName]);
-        $eventId = $stmt->fetchColumn();
-        if ($eventId) {
+        if ($stmt->fetchColumn()) {
             throw new Exception("Event with this name already exists.");
         }
         //update event name in db
@@ -98,17 +105,19 @@ class FacultyStaff extends User{
     public function editEventDate($eventId, $newDate): void {
         // init db
         $dbCnx = require('db.php');
-
-        // check if event date is in the past
+    
         $currentDate = new DateTime();
-        if ($newDate <= $currentDate) {
+        $inputDate = new DateTime($newDate); // Convert string to DateTime
+    
+        if ($inputDate < $currentDate) {
             throw new Exception("Event date cannot be in the past.");
         }
-        $stmt = $dbCnx->prepare("UPDATE `Event` SET date = ? WHERE eventId = ?");
-        $stmt->execute([$newDate, $eventId]);
+    
+        $stmt = $dbCnx->prepare("UPDATE Event SET date = ? WHERE eventId = ?");
+        $stmt->execute([$inputDate->format('Y-m-d'),$eventId]);
     }
 
-    public function getEvents(): array {
+    public static function getEvents(): array {
         return Event::getEvents();
     }
 

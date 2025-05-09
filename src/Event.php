@@ -55,11 +55,19 @@ class Event {
         return $this->description;
     }
 
-    public function getMadeBy(): string {
-        if (!isset($this->creatorId)) {
+    public static function getMadeBy($creatorId): string {
+        if (!isset($creatorId)) {
             throw new Exception("This event has not been added to db yet.");
         }
-        return (string)$this->creatorId;
+        // get user name from db
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT username FROM `User` WHERE user_id = ?");
+        $stmt->execute([$creatorId]);   
+        $username = $stmt->fetchColumn();
+        if (!$username) {
+            throw new Exception("Creator not found.");
+        }
+        return $username;
     }
 
 
