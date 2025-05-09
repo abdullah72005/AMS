@@ -70,15 +70,15 @@ class Newsletter
     {
         $this->state = $state;
     }
-    public function delete()
+    public static function delete($id)
     {
         try {        
             $dbCnx = require('db.php');
-            $stmt = $dbCnx->prepare("DELETE FROM Newsletter WHERE id = ?");
-            $stmt->execute([$this->id]);
+            $stmt = $dbCnx->prepare("DELETE FROM Newsletter WHERE Newsletter_id = (?)");
+            $stmt->execute([$id]);
             echo "Deleting newsletter.\n";}
             catch (Exception $e) {
-                echo "Failed to delete newsletter: " . $e->getMessage();
+                echo "Failed to delete newsletter: " . $e->getMessage() . $id;
             }
     }
     public function save()
@@ -114,8 +114,13 @@ class Newsletter
             $stmt = $dbCnx->prepare("SELECT * FROM Newsletter WHERE newsletter_id = ? order by newsletter_id DESC");
             $stmt->execute([$id]);
             $newsletter = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($newsletter['publishedState'] == 0) {
+                $state = new DraftState();
+            } else {
+                $state = new PublishedState();
+            }
             if ($newsletter) {
-                return new Newsletter($newsletter['creatorId'], $newsletter['title'], $newsletter['body'], new PublishedState(), $newsletter['newsletter_id']);
+                return new Newsletter($newsletter['creatorId'], $newsletter['title'], $newsletter['body'], $state, $newsletter['newsletter_id']);
             } else {
                 throw new Exception("Newsletter not found.");
             }

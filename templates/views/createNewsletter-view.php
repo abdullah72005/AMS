@@ -19,7 +19,7 @@ if (isset($_GET['id']) && $_GET['id'] !== '') {
         exit;
     }
 }
-if ($newsletter->getIntState() == 1) {
+if (isset($newsletter)  && $newsletter->getIntState() == 1) {
     echo "You cannot edit a published newsletter.";
     exit;
 } 
@@ -37,12 +37,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
     }
     if ($state === 'delete') {
-        $newsletter->delete();
+        newsletter::delete($id);
         exit;
     }
     $newsletter = $user->createNewsletter($title, $description, $state, $id);
     
-    echo $newsletter->save();
+    $newId = $newsletter->save();
+    if ($state instanceof DraftState){
+        header("Location: newsletterDrafts.php?");
+    }
+    else {
+        header("Location: newsletter.php?id=$newId");
+    }
     exit;
 }
 ?>    

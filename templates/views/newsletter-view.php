@@ -2,6 +2,10 @@
 if (isset($_GET['id']) && $_GET['id'] !== '') {
     try {
         $newsletters = Newsletter::getNewsletter($_GET['id']);
+        if ($newsletters->getIntState() == 0) {
+            echo "this does not exist";
+            exit;
+        }
     } catch (Exception $e) {
         echo "Failed to get newsletter: " . $e->getMessage();
         exit;
@@ -13,7 +17,7 @@ if (isset($_GET['id']) && $_GET['id'] !== '') {
 <div class="mt-4 container-fluid">
     <?php if (!empty($newsletters)){ ?>
     <?php if(!(isset($_GET['id']) && $_GET['id'] !== '')){ ?>
-    <h5>all donations(<?= count($newsletters) ?>):</h5>
+    <h5>all newsletters(<?= count($newsletters) ?>):</h5>
     <div class="row">
                 <?php  foreach ($newsletters as $newsletter): ?>
                     <div class="card mb-3 w-50 mr-4">
