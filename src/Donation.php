@@ -27,7 +27,7 @@ class Donation
             $stmt->execute();
             return "Donation of $this->amount for $this->cause has been made successfully. on " . date('Y-m-d H:i:s');
         } catch (Exception $e) {
-            return "Failed to make donation: " . $e->getMessage() . serialize($db);
+            return "you have no donations yet" . $e->getMessage();
         }
     }
     public function getDonorId()

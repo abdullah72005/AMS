@@ -195,6 +195,7 @@ abstract class User
     }
 
 
+
     static public function getRole($username)
     {
         if (empty($username) || !is_string($username)) {

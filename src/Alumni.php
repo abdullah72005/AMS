@@ -64,21 +64,24 @@ class Alumni extends User
         return $stmt->fetchColumn();
     }
 
-    public function makeDonation($id , $amount, $cause)
+    public function makeDonation( $amount, $cause)
     { 
-        $donation = new Donation($id, $amount, $cause);
+        $donation = new Donation($this->getId(), $amount, $cause);
         return $donation->donate();
     }
 
     public function getDonations()
     {
         // init db
+        try {        
         $dbCnx = require('db.php');
-
-        $stmt = $dbCnx->prepare("SELECT * FROM donations WHERE userId = :userId");
-        $stmt->bindParam(':userId', $this->getId());
+        $stmt = $dbCnx->prepare("SELECT * FROM donation WHERE donor_id = :user_id order by donation_id desc");
+        $stmt->bindValue(':user_id', $this->getId());
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);}
+        catch (Exception $e) {
+            return "Failed to get donations: " . $e->getMessage();
+        }
     }
     public function register_user($password, $role)
     {
@@ -123,7 +126,7 @@ class Alumni extends User
         $stmt->execute([$eventId]);
         $eventDate = $stmt->fetchColumn();
         $currentDate = new DateTime();
-        if ($eventDate <= $currentDate) {
+        if ($eventDate > $currentDate) {
             throw new Exception("Event date cannot be in the past.");
         }
 
