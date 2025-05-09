@@ -88,7 +88,7 @@ class Newsletter
                 $dbCnx = require('db.php');
                 $stmt = $dbCnx->prepare("UPDATE Newsletter SET title = ?, body = ?, publishedState = ? WHERE newsletter_id = ?");
                 $stmt->execute([$this->title, $this->body, $this->getIntState(), $this->id]);
-                return$dbCnx->lastInsertId();
+                return $this->id;
             } catch (Exception $e) {
                 return "Failed to update newsletter: " . $e->getMessage();
             }

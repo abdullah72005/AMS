@@ -7,7 +7,6 @@ class Alumni extends User
     private $mentorStatus; 
     private $verfied;
     private $fieldOfstudy;
-
     private $major;
     private $graduationDate;
 

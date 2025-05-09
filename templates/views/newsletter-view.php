@@ -28,7 +28,7 @@ if (isset($_GET['id']) && $_GET['id'] !== '') {
                         </div>
                     </div>
                 <?php endforeach; ?>
-                <?php } ?>
+                <?php } else { ?>
                     <div class="card h-50">
                         <div class="card-body">
                             <h5 class="card-title">
@@ -39,4 +39,4 @@ if (isset($_GET['id']) && $_GET['id'] !== '') {
                     </div>
                 </div>
             </div>
-<?php } ?>
+<?php }} ?>

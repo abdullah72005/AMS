@@ -21,7 +21,7 @@ $hasMentor = !empty($mentorshipInfo);
 // Get unique majors from all mentors
 try {
     $allMentors = $student->seeAllMentors();
-    $majors = array_unique(array_column($allMentors, 'major'));
+    $majors = array_column($allMentors, 'major');
 } catch (Exception $e) {
     $errorMsg = "Error loading mentor data: " . $e->getMessage();
 }
