@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS `User` (
   `password_hash` VARCHAR(500) NOT NULL,
   `role` ENUM('Alumni', 'Student', 'Admin', 'FacultyStaff') NOT NULL
 ) ENGINE=InnoDB;
-
 -- 2. Alumni
 CREATE TABLE IF NOT EXISTS `Alumni` (
   `userId` INT PRIMARY KEY,
@@ -136,4 +135,17 @@ CREATE TABLE IF NOT EXISTS `Student_Mentor` (
     FOREIGN KEY (`mentor_id`) REFERENCES `Alumni`(`userId`)
       ON DELETE CASCADE
       ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- 13. User_Subscriptions
+CREATE TABLE IF NOT EXISTS user_subscriptions (
+  user_id INT NOT NULL PRIMARY KEY,
+  subscribed_newsletter BOOLEAN NOT NULL DEFAULT FALSE,
+  subscribed_mentorship BOOLEAN NOT NULL DEFAULT FALSE,
+  subscribed_events BOOLEAN NOT NULL DEFAULT FALSE,
+  CONSTRAINT fk_subscriptions_user
+    FOREIGN KEY (user_id)
+    REFERENCES User(user_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 ) ENGINE=InnoDB;

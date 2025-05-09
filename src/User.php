@@ -254,6 +254,21 @@ abstract class User
         return $stmt->fetchColumn();
     }
 
+    static public function getIDFromUsername($username)
+    {
+        // init db
+        $dbCnx = require('db.php');
+
+        // check input
+        if (empty($userId)) {
+            throw new InvalidArgumentException("No user with this username.");
+        }
+        // Get username from user ID
+        $stmt = $dbCnx->prepare("SELECT userId FROM User WHERE username = ?");
+        $stmt->execute([$username]);
+        return $stmt->fetchColumn();
+    }
+
 
 
     static public function getRole($username)
