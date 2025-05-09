@@ -21,7 +21,7 @@ class Mentorship {
             // Load existing mentorship
             $this->mentorshipId = $data['mentorship_id'];
             $this->description = $data['description'];
-            $this->date = DateTime::createFromFormat('d-m-y', $data['date']);
+            $this->date = DateTime::createFromFormat('y-m-d', $data['date']);
             $this->studentsIds = $this->getStudentsIds();
         } 
         else 
@@ -31,10 +31,10 @@ class Mentorship {
             $stmt->execute([
                 $this->mentorId,
                 $this->description,
-                $this->date->format('d-m-y')
+                $this->date->format('y-m-d')
             ]);
             $this->mentorshipId = $this->dbCnx->lastInsertId();
-            $stmt = $this->dbCnx->prepare("SELECT user_id FROM Alumni WHERE user_id = ? AND verified = 1 AND mentor = 1");
+            $stmt = $this->dbCnx->prepare("SELECT userId FROM Alumni WHERE userId = ? AND verified = 1 AND mentor = 1");
             $stmt->execute([$this->mentorId]);
             if (!$stmt->fetch()) {
                 throw new Exception("Alumni is not verified or not registered as mentor");
@@ -112,7 +112,7 @@ class Mentorship {
         
         $stmt = $this->dbCnx->prepare("UPDATE Mentorship SET date = ? WHERE mentorship_id = ?");
         $stmt->execute([
-            $this->date->format('d-m-y'),
+            $this->date,
             $this->mentorshipId
         ]);
     }

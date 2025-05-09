@@ -180,7 +180,20 @@ abstract class User
 
 
    
+    static public function getUsernameFromId($userId)
+    {
+        // init db
+        $dbCnx = require('db.php');
 
+        // check input
+        if (empty($userId)) {
+            throw new InvalidArgumentException("No user with this id.");
+        }
+        // Get username from user ID
+        $stmt = $dbCnx->prepare("SELECT username FROM User WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        return $stmt->fetchColumn();
+    }
 
 
     static public function getRole($username)
@@ -200,6 +213,25 @@ abstract class User
         $role = $stmt->fetchColumn();
 
         return $role ?: null;
+    }
+
+    public function searchAlumni($username)
+    {
+        // init db
+        $dbCnx = require('db.php');
+
+        // check input
+        if (empty($username)) {
+            throw new InvalidArgumentException("Username cannot be empty.");
+        }
+        if (!is_string($username)) {
+            throw new InvalidArgumentException("Username must be strings.");
+        }
+
+        // search for alumni
+        $stmt = $dbCnx->prepare("SELECT User.username, Alumni.graduationDate, Alumni.major Alumni.mentor FROM Alumni INNER JOIN User ON Alumni.userId User.user_id WHERE User.username = ?;");
+        $stmt->execute([$username]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
 }

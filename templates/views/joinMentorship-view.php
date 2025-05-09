@@ -14,6 +14,10 @@ if (!isset($_SESSION['userObj']) || !($_SESSION['userObj'] instanceof Student)) 
 
 $student = $_SESSION['userObj'];
 
+// Get student's current mentorship info
+$mentorshipInfo = $student->getCurrentMentorship();
+$hasMentor = !empty($mentorshipInfo);
+
 // Get unique majors from all mentors
 try {
     $allMentors = $student->seeAllMentors();
@@ -28,10 +32,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST['search'])) {
             $searchTerm = $_POST['major'];
             $mentors = $student->search($searchTerm);
-        } elseif (isset($_POST['selectMentor'])) {
-            $mentorId = $_POST['mentor_id'];
-            $student->selectMentor($mentorId);
+        } elseif (isset($_POST['selectMentor']) && !$hasMentor) {
+            $mentorUsername = $_POST['mentor_id'];
+            $student->selectMentor($mentorUsername);
             $successMsg = "Mentor selected successfully!";
+            // Refresh mentorship info
+            $mentorshipInfo = $student->getCurrentMentorship();
+            $hasMentor = !empty($mentorshipInfo);
         }
     } catch (Exception $e) {
         $errorMsg = $e->getMessage();
@@ -51,6 +58,35 @@ if (empty($mentors) && !isset($_POST['search'])) {
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
+
+            <!-- Current Mentorship Section -->
+            <?php if ($hasMentor): ?>
+                <div class="card mb-4 border-success">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="mb-0">Your Current Mentor</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5><?= htmlspecialchars($mentorshipInfo[0]['username']) ?></h5>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        Mentorship Description
+                                    </div>
+                                    <div class="card-body">
+                                        <?= !empty($mentorshipInfo[0]['description']) ? 
+                                            htmlspecialchars($mentorshipInfo[0]['description']) : 
+                                            'No description provided' ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <!-- Search Section -->
             <div class="card mb-4">
                 <div class="card-header">
@@ -85,7 +121,6 @@ if (empty($mentors) && !isset($_POST['search'])) {
                     </form>
                 </div>
             </div>
-
             <!-- Mentors List -->
             <?php if (!empty($mentors)): ?>
                 <div class="card">
@@ -100,6 +135,7 @@ if (empty($mentors) && !isset($_POST['search'])) {
                                         <th>Username</th>
                                         <th>Major</th>
                                         <th>Graduation Year</th>
+                                        <th>Mentorship Description</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -114,16 +150,22 @@ if (empty($mentors) && !isset($_POST['search'])) {
                                                     echo $date ? $date->format('Y') : 'N/A';
                                                 endif; ?>
                                             </td>
+                                            <td><?= htmlspecialchars($mentor['description'] ?? 'No description') ?></td>
                                             <td>
-                                                <form method="post">
-                                                    <input type="hidden" name="mentor_id" 
-                                                        value="<?= $mentor['userId'] ?? $mentor['user_id'] ?>">
-                                                    <button type="submit" name="selectMentor" 
-                                                        class="btn btn-success btn-sm"
-                                                        onclick="return confirm('Select this mentor?')">
-                                                        Select
+                                                <?php if (!$hasMentor): ?>
+                                                    <form method="post">
+                                                        <input type="hidden" name="mentor_id" value="<?= htmlspecialchars($mentor['userId']) ?>">
+                                                        <button type="submit" name="selectMentor" 
+                                                            class="btn btn-success btn-sm"
+                                                            onclick="return confirm('Select this mentor?')">
+                                                            Select
+                                                        </button>
+                                                    </form>
+                                                <?php else: ?>
+                                                    <button class="btn btn-secondary btn-sm" disabled>
+                                                        Already in mentorship
                                                     </button>
-                                                </form>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -153,3 +195,7 @@ if (empty($mentors) && !isset($_POST['search'])) {
         </div>
     </div>
 </div>
+One notable project I led was the development of a stock exchange web application as part of a five-person team. I began by coordinating the creation of UML diagrams to define the system's structure and functionality, ensuring input and alignment from all team members. Based on individual strengths, I organized the team into front-end and back-end groups and took part in the back-end development myself.
+
+Once both teams completed their respective components, I collaborated with another teammate to integrate the front-end and back-end, ensuring the final product was fully functional, coherent, and responsive. The project was successfully delivered and served as a strong example of effective planning, coordination, and teamwork.
+

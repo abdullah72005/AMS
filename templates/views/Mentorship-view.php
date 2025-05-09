@@ -18,13 +18,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST['toggleMentor'])) {
             if ($alumni->isMentor()) {
                 // Stop being a mentor
-                $alumni->updateMentorStatus(0);
+                $alumni->updateMentorStatus(false);
                 $successMsg = "You are no longer serving as a mentor!";
             } else {
                 // Become a mentor
                 $alumni->serveAsMentor();
                 $successMsg = "You are now serving as a mentor!";
             }
+        } elseif (isset($_POST['updateDescription'])) {
+            $mentorship = new Mentorship($alumni->getID());
+            $mentorship->setDescription($_POST['description']);
+            $successMsg = "Description updated successfully!";
         } elseif (isset($_POST['removeStudent'])) {
             $mentorship = new Mentorship($alumni->getID());
             $mentorship->removeStudent($_POST['student_id']);
@@ -44,17 +48,16 @@ try {
     $errorMsg = $e->getMessage();
 }
 ?>
-
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-10">
             <!-- Mentor Status Section -->
-            <div class="card mb-4">
-                <div class="card-header">
+            <div class="card mb-4 shadow">
+                <div class="card-header bg-primary text-white">
                     <h3 class="mb-0">Mentor Management</h3>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
                             <h5 class="mb-1">
                                 Mentor Status: 
@@ -76,13 +79,28 @@ try {
                             </form>
                         <?php endif; ?>
                     </div>
+
+                    <?php if ($alumni->isMentor() && $mentorship): ?>
+                        <form method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Mentorship Description</label>
+                                <textarea class="form-control" name="description" 
+                                    rows="3" placeholder="Describe your mentorship program"><?= 
+                                    htmlspecialchars($mentorship->getDescription()) ?></textarea>
+                            </div>
+                            <button type="submit" name="updateDescription" 
+                                class="btn btn-primary">
+                                <i class="bi bi-save"></i> Update Description
+                            </button>
+                        </form>
+                    <?php endif; ?>
                 </div>
             </div>
 
             <!-- Current Students Section -->
             <?php if ($alumni->isMentor() && $mentorship): ?>
-                <div class="card">
-                    <div class="card-header">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
                         <h3 class="mb-0">Your Students</h3>
                     </div>
                     <div class="card-body">
@@ -91,34 +109,26 @@ try {
                                 No students currently assigned to your mentorship
                             </div>
                         <?php else: ?>
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Student ID</th>
-                                            <th>Username</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($mentorship->getStudentsIds() as $studentId): ?>
-                                            <tr>
-                                                <td><?= htmlspecialchars($studentId) ?></td>
-                                                <td><?= htmlspecialchars(User::getUsernameFromId($studentId)) ?></td>
-                                                <td>
-                                                    <form method="post" class="d-inline">
-                                                        <input type="hidden" name="student_id" value="<?= $studentId ?>">
-                                                        <button type="submit" name="removeStudent" 
-                                                                class="btn btn-danger btn-sm"
-                                                                onclick="return confirm('Remove this student from your mentorship?')">
-                                                            Remove
-                                                        </button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
+                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                                <?php foreach ($mentorship->getStudentsIds() as $studentId): 
+                                    $username = htmlspecialchars(User::getUsernameFromId($studentId));
+                                ?>
+                                    <div class="col">
+                                        <div class="card h-100 shadow-sm">
+                                            <div class="card-body d-flex justify-content-between align-items-center">
+                                                <span class="fw-bold"><?= $username ?></span>
+                                                <form method="post" class="d-inline">
+                                                    <input type="hidden" name="student_id" value="<?= $studentId ?>">
+                                                    <button type="submit" name="removeStudent" 
+                                                            class="btn btn-danger btn-sm"
+                                                            onclick="return confirm('Remove <?= $username ?> from mentorship?')">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
                     </div>
