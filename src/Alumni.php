@@ -8,6 +8,9 @@ class Alumni extends User
     private $verfied;
     private $fieldOfstudy;
 
+    private $major;
+    private $graduationDate;
+
     public function __construct($username)
     {
         parent::__construct($username);
@@ -157,6 +160,69 @@ class Alumni extends User
 
         $_SESSION['userObj'] = $this;
     }
+
+    public static function getAllUserData($userId)
+    {
+        $arr1 = parent::getAllUserData($userId);
+
+        // init db
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT * FROM Alumni WHERE userId = :user_id");
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->execute();
+        $arr2 = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return array_merge($arr1, $arr2);
+    }
+
+    public function setGraduationDate($newGraduationDate)
+    {
+        // init db
+        $dbCnx = require('db.php');
+
+        // check if new graduation date is valid DateTime formatting
+        $date = DateTime::createFromFormat('Y-m-d', $newGraduationDate);
+        if (!$date || $date->format('Y-m-d') !== $newGraduationDate) {
+            throw new Exception("Invalid date format. Please use YYYY-MM-DD.");
+        }
+
+        // check if graduation date is in the past
+        $currentDate = new DateTime();
+        if ($date > $currentDate) {
+            throw new Exception("Graduation date must be in the past.");
+        }
+
+        $stmt = $dbCnx->prepare("UPDATE Alumni SET graduationDate = :graduationDate WHERE userId = :user_id");
+        $stmt->bindParam(':graduationDate', $date->format('Y-m-d'));
+        $stmt->bindParam(':user_id', $this->getId());
+        $stmt->execute();
+        $this->graduationDate = $date->format('Y-m-d');
+    }
+
+    public function setMajor($newMajor)
+    {
+        $valid_majors = User::$validMajors;
+        if (!in_array($newMajor, $valid_majors)) {
+            throw new Exception("Invalid major. Please choose from the following: " . implode(", ", $valid_majors));
+        }
+        // init db
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("UPDATE Alumni SET major = :major WHERE userId = :user_id");
+        $stmt->bindParam(':major', $newMajor);
+        $stmt->bindParam(':user_id', $this->getId());
+        $stmt->execute();
+        $this->major = $newMajor;
+    }
+
+    public static function getUnverifiedAlumni()
+    {
+        // init db
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT userId FROM Alumni WHERE verified = 0");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_COLUMN); // Fetch as a flat array of userIds
+    }
+    
 }
 
 ?>

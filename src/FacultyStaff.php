@@ -51,23 +51,25 @@ class FacultyStaff extends User{
     }
 
     public function getEventParticipants($eventId) {
-            // init db
-            $dbCnx = require('db.php');
-    
-            $stmt = $dbCnx->prepare("
-                SELECT u.username 
-                FROM EventParticipant ep
-                INNER JOIN User u ON ep.participant_id = u.user_id
-                WHERE ep.event_id = ?
-                ");
-            $stmt->execute([$eventId]);
-    
-            // Fetch all usernames as an array
-            $usernames = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    
-            return $usernames;}
+        // init db
+        $dbCnx = require('db.php');
 
-    public static function deleteEvent(int $eventId) {
+        $stmt = $dbCnx->prepare("
+            SELECT u.username 
+            FROM EventParticipant ep
+            INNER JOIN User u ON ep.participant_id = u.user_id
+            WHERE ep.event_id = ?
+            ");
+        $stmt->execute([$eventId]);
+
+        // Fetch all usernames as an array
+        $usernames = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        return $usernames;
+    }
+        
+
+    public function deleteEvent(int $eventId) {
         // init db
         $dbCnx = require('db.php');
 
@@ -162,6 +164,38 @@ class FacultyStaff extends User{
         }
 
     }
+
+    public static function getAllUserData($userId)
+    {
+        $arr1 = parent::getAllUserData($userId);
+
+        // init db
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT * FROM `FacultyStaff` WHERE user_id = :user_id");
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->execute();
+        $arr2 = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return array_merge($arr1, $arr2);
+    }
+
+    public function verifyAlumni($Id): void {
+        // init db
+        $dbCnx = require('db.php');
+
+        // check if alumni exists
+        $stmt = $dbCnx->prepare("SELECT userId FROM `Alumni` WHERE userId = ?");
+        $stmt->execute([$Id]);
+        $alumniId = $stmt->fetchColumn();
+        if (!$alumniId) {
+            throw new Exception("Alumni with this ID does not exist.");
+        }
+
+        // verify alumni
+        $stmt = $dbCnx->prepare("UPDATE `Alumni` SET verified = 1 WHERE userId = ?");
+        $stmt->execute([$alumniId]);
+    }
+
 }
 
 ?>

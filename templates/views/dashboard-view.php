@@ -12,7 +12,7 @@ catch (Exception $e){
         <!-- Main Glass Content -->
         <div class="glass-container">
             <div class="glass-header">
-            <h2>Welcome, <?= htmlspecialchars($username) ?> 👋</h2>
+            <h2>Welcome,👋</h2>
             <p class="lead">Alumni Dashboard — Alumni Management System</p>
             </div>
 
@@ -69,7 +69,7 @@ catch (Exception $e){
         <!-- Faculty cards... -->
         <div class="glass-container">
             <div class="glass-header">
-            <h2>Welcome, <?= htmlspecialchars($username) ?> 👋</h2>
+            <h2>Welcome,👋</h2>
             <p class="lead">Faculty Dashboard — Alumni Management System</p>
             </div>
 
@@ -136,7 +136,7 @@ catch (Exception $e){
         <!-- Main Content -->
         <div class="glass-container">
             <div class="glass-header">
-            <h2>Welcome <?= htmlspecialchars($username) ?> 👋</h2>
+            <h2>Welcome 👋</h2>
             <p class="lead">Student Dashboard — Alumni Management System</p>
             </div>
 
