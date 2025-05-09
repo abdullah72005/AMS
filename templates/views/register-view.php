@@ -19,6 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $user = new Admin($username);
         } else {
             throw new Exception("Invalid role selected.");
+            exit();
         }
 
         $user->register_user($pass, $role);

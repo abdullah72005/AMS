@@ -195,7 +195,3 @@ if (empty($mentors) && !isset($_POST['search'])) {
         </div>
     </div>
 </div>
-One notable project I led was the development of a stock exchange web application as part of a five-person team. I began by coordinating the creation of UML diagrams to define the system's structure and functionality, ensuring input and alignment from all team members. Based on individual strengths, I organized the team into front-end and back-end groups and took part in the back-end development myself.
-
-Once both teams completed their respective components, I collaborated with another teammate to integrate the front-end and back-end, ensuring the final product was fully functional, coherent, and responsive. The project was successfully delivered and served as a strong example of effective planning, coordination, and teamwork.
-
