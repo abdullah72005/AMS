@@ -122,7 +122,7 @@ class Alumni extends User
         $this->graduationDate = $date->format('Y-m-d');
     }
 
-    public  function setMajor($newMajor)
+    public function setMajor($newMajor)
     {
         $valid_majors = User::$validMajors;
         if (!in_array($newMajor, $valid_majors)) {
@@ -135,6 +135,15 @@ class Alumni extends User
         $stmt->bindParam(':user_id', $this->getId());
         $stmt->execute();
         $this->major = $newMajor;
+    }
+
+    public static function getUnverifiedAlumni()
+    {
+        // init db
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT userId FROM Alumni WHERE verified = 0");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_COLUMN); // Fetch as a flat array of userIds
     }
     
 }

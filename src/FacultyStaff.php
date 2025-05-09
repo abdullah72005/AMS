@@ -144,6 +144,23 @@ class FacultyStaff extends User{
         return array_merge($arr1, $arr2);
     }
 
+    public function verifyAlumni($Id): void {
+        // init db
+        $dbCnx = require('db.php');
+
+        // check if alumni exists
+        $stmt = $dbCnx->prepare("SELECT userId FROM `Alumni` WHERE userId = ?");
+        $stmt->execute([$Id]);
+        $alumniId = $stmt->fetchColumn();
+        if (!$alumniId) {
+            throw new Exception("Alumni with this ID does not exist.");
+        }
+
+        // verify alumni
+        $stmt = $dbCnx->prepare("UPDATE `Alumni` SET verified = 1 WHERE userId = ?");
+        $stmt->execute([$alumniId]);
+    }
+
 }
 
 ?>
