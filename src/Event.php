@@ -45,7 +45,7 @@ class Event extends Subject {
         $stmt->execute([$this->name, $this->description, $this->date->format('y-m-d H:i:s'), $this->creatorId]);
         
         $this->eventId = (int)$this->dbCnx->lastInsertId();
-        $message = "New Event has been scheduled ". $this->name . $this->date;
+        $message = "New Event has been scheduled ". $this->name;
         $this->notify($message);
         return $this->eventId;
     }

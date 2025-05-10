@@ -244,6 +244,14 @@ try {
                         <a href="newsletter.php" class="btn btn-light text-danger btn-custom mt-auto">Newsletters</a>
                     </div>
                 </div>
+                <div class="col">
+                    <div class="card p-4">
+                        <div class="card-icon text-primary">📝</div>
+                        <h5 class="card-title">Notifications</h5>
+                        <p class="card-text">check for any new notifications.</p>
+                        <a href="notification.php" class="btn btn-light text-primary btn-custom mt-auto">checl notification</a>
+                    </div>
+                </div>
             </div>
         </div>
 

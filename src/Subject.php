@@ -1,36 +1,32 @@
 <?php
+require_once 'User.php';
+require_once 'Alumni.php';
+require_once 'Subject.php';
 abstract class Subject {
     public function attach($user, $subscriptionName) {
         try {
+            $subscriptionMap = [
+                'Newsletter' => 'subscribed_newsletter',
+                'Mentorship' => 'subscribed_mentorship',
+                'Event' => 'subscribed_events'
+            ];
+            
+            $calledClass = get_called_class();
+            
+            if (!isset($subscriptionMap[$calledClass])) {
+                throw new Exception("No subscription mapping for class: $calledClass");
+            }
+            
+            $subscriptionName = $subscriptionMap[$calledClass];
             $dbCnx = require('db.php');
-            $stmt = $dbCnx->prepare("SELECT * FROM user_subscriptions WHERE user_id = :userId");
-            $stmt->bindParam(':userId', $user->getId());
-            $stmt->execute();
+            $stmt = $dbCnx->prepare("SELECT * FROM user_subscriptions WHERE user_id = ?");
+            $stmt->execute([$user->getId()]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($result) 
             {
-                if($subscriptionName == 'subscribed_newsletter') 
-                {
-                    $stmt = $dbCnx->prepare("UPDATE user_subscriptions SET subscribed_newsletter = 1 WHERE user_id = ?");
-                    $stmt->execute([$user->getId()]);
-                    return;
-                }
-                elseif($subscriptionName == 'subscribed_mentorship') 
-                {
-                    $stmt = $dbCnx->prepare("UPDATE user_subscriptions SET subscribed_mentorship = 1 WHERE user_id = ?");
-                    $stmt->execute([$user->getId()]);
-                    return;
-                }
-                elseif($subscriptionName == 'subscribed_events') 
-                {
-                    $stmt = $dbCnx->prepare("UPDATE user_subscriptions SET subscribed_events = 1 WHERE user_id = ?");
-                    $stmt->execute([$user->getId()]);
-                    return;
-                }
-                else 
-                {
-                    throw new Exception("Invalid subscription name.");
-                }
+                $stmt = $dbCnx->prepare("UPDATE user_subscriptions SET $subscriptionName = 1 WHERE user_id = ?");
+                $stmt->execute([$user->getId()]);
+                return;
             }
             else
             {
@@ -47,35 +43,28 @@ abstract class Subject {
 
     public function detach($user, $subscriptionName) {
         try {
+            $subscriptionMap = [
+                'Newsletter' => 'subscribed_newsletter',
+                'Mentorship' => 'subscribed_mentorship',
+                'Event' => 'subscribed_events'
+            ];
+            
+            $calledClass = get_called_class();
+            
+            if (!isset($subscriptionMap[$calledClass])) {
+                throw new Exception("No subscription mapping for class: $calledClass");
+            }
+            
+            $subscriptionName = $subscriptionMap[$calledClass];
             $dbCnx = require('db.php');
-            $stmt = $dbCnx->prepare("SELECT * FROM user_subscriptions WHERE user_id = :userId");
-            $stmt->bindParam(':userId', $user->getId());
-            $stmt->execute();
+            $stmt = $dbCnx->prepare("SELECT * FROM user_subscriptions WHERE user_id = ?");
+            $stmt->execute([$user->getId()]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($result) 
             {
-                if($subscriptionName == 'subscribed_newsletter') 
-                {
-                    $stmt = $dbCnx->prepare("UPDATE user_subscriptions SET subscribed_newsletter = 0 WHERE user_id = ?");
-                    $stmt->execute([$user->getId()]);
-                    return;
-                }
-                elseif($subscriptionName == 'subscribed_mentorship') 
-                {
-                    $stmt = $dbCnx->prepare("UPDATE user_subscriptions SET subscribed_mentorship = 0 WHERE user_id = ?");
-                    $stmt->execute([$user->getId()]);
-                    return;
-                }
-                elseif($subscriptionName == 'subscribed_events') 
-                {
-                    $stmt = $dbCnx->prepare("UPDATE user_subscriptions SET subscribed_events = 0 WHERE user_id = ?");
-                    $stmt->execute([$user->getId()]);
-                    return;
-                }
-                else 
-                {
-                    throw new Exception("Invalid subscription name.");
-                }
+                $stmt = $dbCnx->prepare("UPDATE user_subscriptions SET $subscriptionName = 0 WHERE user_id = ?");
+                $stmt->execute([$user->getId()]);
+                return;
             }
             else
             {
@@ -85,7 +74,7 @@ abstract class Subject {
         }
         catch (Exception $e) 
         {
-            throw new Exception("Error updating subscription: " . $e->getMessage());
+            throw new Exception("Error updating subscription: " . $e->getMessage() );
         }
 
 
@@ -93,40 +82,12 @@ abstract class Subject {
 }
 
     public function notify($message) {
-        $subscriptionMap = [
-            'Newsletter' => 'subscribed_newsletter',
-            'Mentorship' => 'subscribed_mentorship',
-            'Event' => 'subscribed_events'
-        ];
-        
+        //this will make ali cry 
         $calledClass = get_called_class();
-        
-        if (!isset($subscriptionMap[$calledClass])) {
-            throw new Exception("No subscription mapping for class: $calledClass");
-        }
-        
-        $subscriptionName = $subscriptionMap[$calledClass];
-        $dbCnx = require('db.php');
-
-        try {
-            // Get all subscribed users
-            $stmt = $dbCnx->prepare("
-                SELECT user_id 
-                FROM user_subscriptions 
-                WHERE $subscriptionName = 1
-            ");
-            $stmt->execute();
-            
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $user = new Alumni(User::getUsernameFromId($row['user_id']));
-                $user->update($message);
-            }
-            
-        } catch (PDOException $e) {
-            error_log("Notification failed: " . $e->getMessage());
-            throw new Exception("Failed to send notifications");
-        }
+        Alumni::update($message, $calledClass);
     }
+
+
 
     public function isSubscribed($user) {
         $calledClass = get_called_class();
@@ -143,8 +104,8 @@ abstract class Subject {
         
         $subscriptionName = $subscriptionMap[$calledClass];
         $dbCnx = require('db.php');
-        $stmt = $dbCnx->prepare("SELECT $subscriptionName FROM user_subscriptions WHERE user_id = 44");
-        $stmt->execute();
+        $stmt = $dbCnx->prepare("SELECT $subscriptionName FROM user_subscriptions WHERE user_id = ?");
+        $stmt->execute([$user->getId()]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
         return $result && $result[$subscriptionName] == 1;

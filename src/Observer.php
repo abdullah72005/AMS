@@ -1,5 +1,5 @@
 <?php
 interface Observer {
-    public function update($message);
+    public static function update($message, $calledClass);
 }
 ?>
