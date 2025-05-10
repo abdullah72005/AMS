@@ -241,13 +241,36 @@ class Alumni extends User implements Observer
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_COLUMN); // Fetch as a flat array of userIds
     }
-    public function update($message)
+    public static function update($message)
     {
-        // init db
-        $dbCnx = require('db.php');
-        $id = $this::getIDFromUsername($this->getUsername());
-        $stmt = $dbCnx->prepare("INSERT INTO Notification (user_id, notification) VALUES (?, ?)");
-        $stmt->execute([$id,$message]);
+        try{
+            $calledClass = get_called_class();
+        
+            $subscriptionMap = [
+                'Newsletter' => 'subscribed_newsletter',
+                'Mentorship' => 'subscribed_mentorship',
+                'Event' => 'subscribed_events'
+            ];
+            
+            if (!isset($subscriptionMap[$calledClass])) {
+                throw new Exception("No subscription mapping for class: $calledClass");
+            }
+            
+            $subscriptionName = $subscriptionMap[$calledClass];
+            // init db
+            $dbCnx = require('db.php');
+            $stmt = $dbCnx->prepare("select * from user_subscriptions where ? = 1");
+            $stmt->execute([$subscriptionName]);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($result as $row) {
+                $userId = $row['user_id'];
+                $stmt = $dbCnx->prepare("INSERT INTO Notification (user_id, message) VALUES (?, ?)");
+                $stmt->execute([$userId, $message]);
+            }
+        }
+        catch (Exception $e) {
+            throw new Exception("Error updating subscription: " . $e->getMessage());
+        }
     }
 
     public function getNotifications()

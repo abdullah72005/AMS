@@ -79,40 +79,12 @@ abstract class Subject {
 }
 
     public function notify($message) {
-        $subscriptionMap = [
-            'Newsletter' => 'subscribed_newsletter',
-            'Mentorship' => 'subscribed_mentorship',
-            'Event' => 'subscribed_events'
-        ];
-        
-        $calledClass = get_called_class();
-        
-        if (!isset($subscriptionMap[$calledClass])) {
-            throw new Exception("No subscription mapping for class: $calledClass");
-        }
-        
-        $subscriptionName = $subscriptionMap[$calledClass];
-        $dbCnx = require('db.php');
-
-        try {
-            // Get all subscribed users
-            $stmt = $dbCnx->prepare("
-                SELECT user_id 
-                FROM user_subscriptions 
-                WHERE $subscriptionName = 1
-            ");
-            $stmt->execute();
-            
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $user = new Alumni(User::getUsernameFromId($row['user_id']));
-                $user->update($message);
-            }
-            
-        } catch (PDOException $e) {
-            error_log("Notification failed: " . $e->getMessage());
-            throw new Exception("Failed to send notifications");
-        }
+        //this will make ali cry 
+        Observer::update($message);
     }
+
+
+
     public function isSubscribed($user) {
         $calledClass = get_called_class();
         
