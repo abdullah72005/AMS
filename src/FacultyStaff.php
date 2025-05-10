@@ -69,7 +69,7 @@ class FacultyStaff extends User{
     }
         
 
-    public function deleteEvent(int $eventId) {
+    public static function deleteEvent(int $eventId) {
         // init db
         $dbCnx = require('db.php');
 

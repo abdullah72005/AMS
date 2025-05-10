@@ -2,6 +2,7 @@
 require_once 'User.php';
 require_once 'Observer.php';
 require_once __DIR__ . '/Donation.php';
+require_once 'Observer.php';
 
 class Alumni extends User implements Observer
 {
@@ -39,12 +40,31 @@ class Alumni extends User implements Observer
 
     public function isMentor()
     {
-        return $this->mentorStatus;
+        // init db
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT mentor FROM Alumni WHERE userId = ?");
+        $stmt->execute([$this->getId()]);
+        $mentorStatus = $stmt->fetchColumn();
+        if ($mentorStatus == 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function isVerfied()
     {
-        return $this->verfied;
+        // init db
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT verified FROM Alumni WHERE userId = ?");
+        $stmt->execute([$this->getId()]);
+        $verfied = $stmt->fetchColumn();
+        if ($verfied == 1) {
+            return true;
+        } 
+            
+        return false;
+        
     }
 
     public function setFieldOfstudy($fieldOfStudy)
