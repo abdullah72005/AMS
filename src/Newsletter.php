@@ -8,23 +8,16 @@ class Newsletter extends Subject
     private $creatorId;
     private $state;
     public function __construct($creatorId = null, $title = null, $body = null,State  $state = new DraftState(), $id = null)
-    {
-        // Check if no arguments were passed
-        if (func_num_args() === 0) {
-            // Default constructor logic
-            $this->creatorId = null;
-            $this->title = '';
-            $this->body = '';
-            $this->state = null;
-            $this->id = null;
-        } else {
-            // Regular constructor logic
-            $this->creatorId = $creatorId;
-            $this->title = $title;
-            $this->body = $body;
-            $this->state = $state ?? new DraftState();
-            $this->id = $id;
-        }
+    { 
+        //can you @ someone in the comments?
+        // @aliehab ? 
+        // why the fuck can a state be null just draft it?
+        // why did you even change this
+        $this->title = $title;
+        $this->body = $body;
+        $this->creatorId = $creatorId;
+        $this->state = $state;
+        $this->id = $id;
 
     }
     public function getId()
@@ -101,6 +94,9 @@ class Newsletter extends Subject
                 $dbCnx = require('db.php');
                 $stmt = $dbCnx->prepare("UPDATE Newsletter SET title = ?, body = ?, publishedState = ? WHERE newsletter_id = ?");
                 $stmt->execute([$this->title, $this->body, $this->getIntState(), $this->id]);
+                if ($this->getIntState() == 1) {
+                    $this->notify("Newsletter has been published" . $this->title);
+                } 
                 return $this->id;
             } catch (Exception $e) {
                 return "Failed to update newsletter: " . $e->getMessage();
@@ -111,6 +107,9 @@ class Newsletter extends Subject
                 $stmt = $dbCnx->prepare("INSERT INTO Newsletter (title, body, creatorId, publishedstate) VALUES (?, ?, ?, ?)");
                 $stmt->execute([$this->title, $this->body, $this->creatorId,$this->getIntState()]);
                 $this->id = $dbCnx->lastInsertId();
+                if ($this->getIntState() == 1) {
+                    $this->notify("Newsletter has been published" . $this->title);
+                }
                 return $dbCnx->lastInsertId();
                 }
                 catch (Exception $e) {

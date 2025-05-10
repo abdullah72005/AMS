@@ -3,7 +3,6 @@
 $newsletterSubject = new Newsletter();
 $mentorshipSubject = new Mentorship();
 $eventSubject = new Event();
-
 // Display names mapping
 $displayNames = [
     'newsletter' => 'Newsletter Updates',

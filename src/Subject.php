@@ -1,4 +1,7 @@
 <?php
+require_once 'User.php';
+require_once 'Alumni.php';
+require_once 'Subject.php';
 abstract class Subject {
     public function attach($user, $subscriptionName) {
         try {
@@ -80,7 +83,8 @@ abstract class Subject {
 
     public function notify($message) {
         //this will make ali cry 
-        Observer::update($message);
+        $calledClass = get_called_class();
+        Alumni::update($message, $calledClass);
     }
 
 

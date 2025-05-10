@@ -113,8 +113,9 @@ CREATE TABLE IF NOT EXISTS `Newsletter` (
 
 -- 11. Notification
 CREATE TABLE IF NOT EXISTS `Notification` (
-  `user_id` INT PRIMARY KEY,
+  `notification_id` INT AUTO_INCREMENT PRIMARY KEY,
   `notification` TEXT NOT NULL,
+  `user_id` INT NOT NULL,
   `read` BOOLEAN DEFAULT FALSE,
   CONSTRAINT `fk_notification_user`
     FOREIGN KEY (`user_id`) REFERENCES `User`(`user_id`)

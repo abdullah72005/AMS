@@ -241,11 +241,9 @@ class Alumni extends User implements Observer
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_COLUMN); // Fetch as a flat array of userIds
     }
-    public static function update($message)
+    public static function update($message, $calledClass)
     {
         try{
-            $calledClass = get_called_class();
-        
             $subscriptionMap = [
                 'Newsletter' => 'subscribed_newsletter',
                 'Mentorship' => 'subscribed_mentorship',
@@ -259,13 +257,13 @@ class Alumni extends User implements Observer
             $subscriptionName = $subscriptionMap[$calledClass];
             // init db
             $dbCnx = require('db.php');
-            $stmt = $dbCnx->prepare("select * from user_subscriptions where ? = 1");
-            $stmt->execute([$subscriptionName]);
+            $stmt = $dbCnx->prepare("select * from user_subscriptions where $subscriptionName = 1");
+            $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($result as $row) {
                 $userId = $row['user_id'];
-                $stmt = $dbCnx->prepare("INSERT INTO Notification (user_id, message) VALUES (?, ?)");
-                $stmt->execute([$userId, $message]);
+                $stmt = $dbCnx->prepare("INSERT INTO Notification (user_id, notification) VALUES (?, ?)");
+                $stmt->execute([(int) $userId, $message]);
             }
         }
         catch (Exception $e) {
