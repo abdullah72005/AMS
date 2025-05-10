@@ -2,6 +2,7 @@
 
 
 if (session_status() == PHP_SESSION_NONE) {
+    ob_start(); // Start output buffering
     session_start();
 }
 // Get current page filename

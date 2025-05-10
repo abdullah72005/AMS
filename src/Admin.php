@@ -1,6 +1,9 @@
 <?php
 
 require_once('User.php');
+require_once("../src/Alumni.php");
+require_once("../src/FacultyStaff.php");
+require_once("../src/Student.php");
 
 
 class Admin extends User
@@ -43,7 +46,21 @@ class Admin extends User
             $role
         ]);
 
-        return $dbCnx->lastInsertId();
+        $insertedUserId = $dbCnx->lastInsertId();
+
+        if ($role === 'Alumni') {
+            $stmt = $dbCnx->prepare("INSERT INTO Alumni (userId) VALUES (:userId)");
+        } elseif ($role === 'FacultyStaff') {
+            $stmt = $dbCnx->prepare("INSERT INTO FacultyStaff (user_id) VALUES (:userId)");
+        } elseif ($role === 'Student') {
+            $stmt = $dbCnx->prepare("INSERT INTO Student (userId) VALUES (:userId)");
+        } elseif ($role === 'Admin') {
+            $stmt = $dbCnx->prepare("INSERT INTO Admin (user_id) VALUES (:userId)");
+        }
+        $stmt->bindParam(':userId', $insertedUserId);
+        $stmt->execute();
+
+        return $insertedUserId;
     }
 
     public function updateUserData($userId, $newUsername = null, $newPassword = null, $newRole = null)

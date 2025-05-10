@@ -1,4 +1,5 @@
 <?php
+
 if (isset($_GET['id']) && $_GET['id'] !== '') {
     try {
         $newsletters = Newsletter::getNewsletter($_GET['id']);
@@ -13,6 +14,16 @@ if (isset($_GET['id']) && $_GET['id'] !== '') {
 } else {
     $newsletters = Newsletter::getPublishedNewsletters();
 } 
+
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'Alumni') {
+    $user = $_SESSION['userObj'];
+    if (!$user->isVerfied()) {
+        echo '<div style="padding: 20px; background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; border-radius: 5px; margin: 20px;">
+                 Your account is not verified. Please contact the administrator for verification.
+              </div>';
+        exit;
+    }
+}
 ?>
 
 <!-- Easter Egg: Custom CSS for modern aesthetic -->
@@ -77,13 +88,13 @@ h5 {
     margin: 0 -15px;
 }
 
-/ Proper spacing for card layout /
+
 .w-50 {
     width: calc(50% - 30px) !important;
     margin: 0 15px 30px;
 }
 
-/ Easter egg: Add a little surprise on hover */
+
 .card:hover .card-title {
     background: linear-gradient(to right, #4e73df, #224abe);
     -webkit-background-clip: text;
@@ -101,7 +112,6 @@ h5 {
             <div class="card mb-3 w-50 mr-4">
                 <div class="card-body ml-4">
                     <h5 class="card-title"><?= htmlspecialchars($newsletter->getTitle()) ?></h5>
-                    <p class="card-text"><?= htmlspecialchars($newsletter->getBody()) ?></p>
                     <a href="newsletter.php?id=<?= $newsletter->getId() ?>" class="btn btn-primary">View</a>
                 </div>
             </div>

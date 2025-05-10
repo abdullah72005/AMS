@@ -1,13 +1,22 @@
 <?php 
 
 if (!isset($_SESSION['loggedin']) || $_SESSION['role'] != 'Alumni'){        
-    echo "You are not allowed to make a donation.  ";
+    echo '<div style="padding: 20px; background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; border-radius: 5px; margin: 20px;">
+             You are not allowed to make a donation.
+          </div>';
     exit;
 } 
 $user = $_SESSION['userObj'];
 
+if (!$user->isVerfied()) {
+    echo '<div style="padding: 20px; background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; border-radius: 5px; margin: 20px;">
+             Your account is not verified. Please contact the administrator for verification.
+          </div>';
+    exit;
+}
 
-$donations = $user->getDonations();
+
+$donations = $user->getDonations() ?? null;
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $amount = $_POST['amount'];
     $cause = $_POST['cause'];
@@ -18,10 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 else {
     ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donation Portal</title>
+
     <style>
         body {
             background-color: #f8f9fa;
@@ -167,8 +173,8 @@ else {
             color: #6c757d;
         }
     </style>
-</head>
-<body>
+
+
     <div class="container py-5">
         <div class="row g-4">
             <!-- Left Column (Form) -->
@@ -229,7 +235,7 @@ else {
                     </h3>
                     
                     <?php if (!empty($donations)): ?>
-                        <p class="text-muted mb-3">You've made <?= count($donations) ?> donation(s) so far. Thank you for your support!</p>
+                        <p class="text-muted mb-3">Thank you for your support!</p>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead>
@@ -260,8 +266,3 @@ else {
             </div>
         </div>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>

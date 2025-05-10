@@ -2,6 +2,16 @@
 $manager = $_SESSION['userObj'] ?? null;
 $userType = $manager ? User::getRole($manager->getUsername()) : null;
 
+// Ensure $user is initialized
+$user = $_SESSION['userObj'] ?? null;
+
+if ($userRole === 'Alumni' && $user && !$user->isVerfied()) {
+    echo '<div style="padding: 20px; background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; border-radius: 5px; margin: 20px;">
+             Your account is not verified. Please contact the administrator for verification.
+          </div>';
+    exit;
+}
+
 if (!isset($_GET['eventId']) || empty($_GET['eventId'])) {
     echo "<div class='container mt-4 alert alert-warning'>No event selected.</div>";
     exit;

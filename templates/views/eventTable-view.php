@@ -4,6 +4,16 @@ if (!isset($userRole)) {
     $userRole = $_SESSION['role'] ?? 'Guest';
 }
 
+// Ensure $user is initialized
+$user = $_SESSION['userObj'] ?? null;
+
+if ($userRole === 'Alumni' && $user && !$user->isVerfied()) {
+    echo '<div style="padding: 20px; background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; border-radius: 5px; margin: 20px;">
+             Your account is not verified. Please contact the administrator for verification.
+          </div>';
+    exit;
+}
+
 $events = FacultyStaff::getEvents(); // Returns array of event IDs
 
 // Handle view event action
