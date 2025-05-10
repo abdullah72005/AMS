@@ -249,7 +249,7 @@ try {
                         <div class="card-icon text-primary">📝</div>
                         <h5 class="card-title">Notifications</h5>
                         <p class="card-text">check for any new notifications.</p>
-                        <a href="notification.php" class="btn btn-light text-primary btn-custom mt-auto">checl notification</a>
+                        <a href="notification.php" class="btn btn-light text-primary btn-custom mt-auto">check notification</a>
                     </div>
                 </div>
             </div>

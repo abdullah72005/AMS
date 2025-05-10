@@ -257,7 +257,7 @@ class Alumni extends User implements Observer
             $subscriptionName = $subscriptionMap[$calledClass];
             // init db
             $dbCnx = require('db.php');
-            $stmt = $dbCnx->prepare("select * from user_subscriptions where $subscriptionName = 1");
+            $stmt = $dbCnx->prepare("SELECT * from user_subscriptions where $subscriptionName = 1");
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($result as $row) {
