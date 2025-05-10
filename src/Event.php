@@ -1,6 +1,6 @@
 <?php
-
-class Event {
+require_once('Subject.php');
+class Event extends Subject {
     private int $eventId;
     private string $name;
     private string $description;
@@ -8,27 +8,35 @@ class Event {
     private int $creatorId;
     private $dbCnx;
 
-    public function __construct($name, $description, $date){
-        $this->name = $name;
-        $this->description = $description;
-        $this->date = $date;
-        $this->dbCnx=require("db.php");    
+    public function __construct($name = null, $description = null, $date = null){
+        if (func_num_args() === 0) 
+        {
+            // Default constructor logic
+            $this->name = '';
+            $this->description = '';
+            $this->date = new DateTime();
+        } 
+        else 
+        {
+            $this->name = $name;
+            $this->description = $description;
+            $this->date = $date;
+            $this->dbCnx=require("db.php");    
 
-        // check if event is already created
-        $stmt = $this->dbCnx->prepare("SELECT eventId FROM `Event` WHERE name = ?");
-        $stmt->execute([$this->name]);
-        $eventId = $stmt->fetchColumn();
-        if ($eventId) {
-            $this->eventId = $eventId;
-
-            // get creatorId
-            $stmt = $this->dbCnx->prepare("SELECT creatorId FROM `Event` WHERE name = ?");
+            // check if event is already created
+            $stmt = $this->dbCnx->prepare("SELECT eventId FROM `Event` WHERE name = ?");
             $stmt->execute([$this->name]);
-            $creatorId = $stmt->fetchColumn();
-            $this->creatorId = $creatorId;
+            $eventId = $stmt->fetchColumn();
+            if ($eventId) {
+                $this->eventId = $eventId;
+
+                // get creatorId
+                $stmt = $this->dbCnx->prepare("SELECT creatorId FROM `Event` WHERE name = ?");
+                $stmt->execute([$this->name]);
+                $creatorId = $stmt->fetchColumn();
+                $this->creatorId = $creatorId;
+            }
         }
-
-
     }
 
     public function addEvent($creatorId){
@@ -37,6 +45,8 @@ class Event {
         $stmt->execute([$this->name, $this->description, $this->date->format('y-m-d H:i:s'), $this->creatorId]);
         
         $this->eventId = (int)$this->dbCnx->lastInsertId();
+        $message = "New Event has been scheduled ". $this->name . $this->date;
+        $this->notify($message);
         return $this->eventId;
     }
 
@@ -101,7 +111,6 @@ class Event {
         $stmt->execute([$eventId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
 }
 
 ?>

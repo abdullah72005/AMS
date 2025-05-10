@@ -16,9 +16,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     header("Location: ".$_SERVER['PHP_SELF']);
 }
 
-
-
-
 else {
     ?>
 <div class="container-fluid mt-5">

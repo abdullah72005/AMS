@@ -16,8 +16,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         $admin = $_SESSION['userObj'];
         if (isset($_POST['addUser'])) {
-            echo $admin;
-            throw new Exception($admin . " is not an admin");
             $admin->createUser($_POST['username'], $_POST['password'], $_POST['role']);
             $successMsg = "User added successfully!";
         } 

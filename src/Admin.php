@@ -187,4 +187,8 @@ class Admin extends User
 
         return array_merge($arr1, $arr2);
     }
+    public function update()
+    {
+        
+    }
 }

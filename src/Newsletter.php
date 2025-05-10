@@ -1,18 +1,31 @@
 <?php 
-class Newsletter
+require_once('Subject.php');
+class Newsletter extends Subject
 {
     private $id;
     private $title;
     private $body;
     private $creatorId;
     private $state;
-    public function __construct($creatorId , $title = null, $body = null,State  $state = new DraftState(), $id = null)
+    public function __construct($creatorId = null, $title = null, $body = null,State  $state = new DraftState(), $id = null)
     {
-        $this->title = $title;
-        $this->body = $body;
-        $this->creatorId = $creatorId;
-        $this->state = $state;
-        $this->id = $id;
+        // Check if no arguments were passed
+        if (func_num_args() === 0) {
+            // Default constructor logic
+            $this->creatorId = null;
+            $this->title = '';
+            $this->body = '';
+            $this->state = null;
+            $this->id = null;
+        } else {
+            // Regular constructor logic
+            $this->creatorId = $creatorId;
+            $this->title = $title;
+            $this->body = $body;
+            $this->state = $state ?? new DraftState();
+            $this->id = $id;
+        }
+
     }
     public function getId()
     {
@@ -171,8 +184,6 @@ interface State
     public function edit($newsletter,$field,$data);
     public function publish($newsletter);
 }
-
-
 
 
 class DraftState implements State

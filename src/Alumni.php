@@ -1,5 +1,6 @@
 <?php   
 require_once 'User.php';
+require_once 'Observer.php';
 require_once __DIR__ . '/Donation.php';
 
 class Alumni extends User implements Observer
@@ -225,14 +226,15 @@ class Alumni extends User implements Observer
         // init db
         $dbCnx = require('db.php');
         $id = $this::getIDFromUsername($this->getUsername());
-        $stmt = $dbCnx->prepare("INSERT INTO notifications (user_id, message) VALUES (?, ?)");
+        $stmt = $dbCnx->prepare("INSERT INTO Notification (user_id, notification) VALUES (?, ?)");
         $stmt->execute([$id,$message]);
     }
+
     public function getNotifications()
     {
         // init db
         $dbCnx = require('db.php');
-        $stmt = $dbCnx->prepare("SELECT * FROM notifications WHERE user_id = ?");
+        $stmt = $dbCnx->prepare("SELECT * FROM Notification WHERE user_id = ?");
         $stmt->execute([$this->getId()]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

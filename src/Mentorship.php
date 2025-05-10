@@ -1,6 +1,7 @@
 <?php
-
-class Mentorship {
+require_once('Subject.php');
+class Mentorship extends Subject
+{
     private $mentorshipId;
     private $mentorId;
     private $studentsIds = [];
@@ -8,36 +9,46 @@ class Mentorship {
     private $date;
     private $dbCnx;
 
-    public function __construct(int $mentorId) {
-        $this->dbCnx = require('db.php');
-        $this->mentorId = $mentorId;
+    public function __construct($mentorId = null) {
+        if (func_num_args() === 0) {
+            // Default constructor logic
+            $this->mentorshipId = null;
+            $this->$mentorId = '';
+            $this->studentsIds = '';
+            $this->description = null;
+            $this->date = null;
+            $this->dbCnx = null;
+        } else { 
+            $this->dbCnx = require('db.php');
+            $this->mentorId = $mentorId;
 
-        // Check for existing mentorship
-        $stmt = $this->dbCnx->prepare("SELECT * FROM Mentorship WHERE mentor_id = ?");
-        $stmt->execute([$this->mentorId]);
-
-        if ($data = $stmt->fetch(PDO::FETCH_ASSOC)) 
-        {
-            // Load existing mentorship
-            $this->mentorshipId = $data['mentorship_id'];
-            $this->description = $data['description'];
-            $this->date = DateTime::createFromFormat('y-m-d', $data['date']);
-            $this->studentsIds = $this->getStudentsIds();
-        } 
-        else 
-        {
-            $this->date = new DateTime();
-            $stmt = $this->dbCnx->prepare("INSERT INTO Mentorship (mentor_id, description, date) VALUES (?, ?, ?)");
-            $stmt->execute([
-                $this->mentorId,
-                $this->description,
-                $this->date->format('y-m-d')
-            ]);
-            $this->mentorshipId = $this->dbCnx->lastInsertId();
-            $stmt = $this->dbCnx->prepare("SELECT userId FROM Alumni WHERE userId = ? AND verified = 1 AND mentor = 1");
+            // Check for existing mentorship
+            $stmt = $this->dbCnx->prepare("SELECT * FROM Mentorship WHERE mentor_id = ?");
             $stmt->execute([$this->mentorId]);
-            if (!$stmt->fetch()) {
-                throw new Exception("Alumni is not verified or not registered as mentor");
+
+            if ($data = $stmt->fetch(PDO::FETCH_ASSOC)) 
+            {
+                // Load existing mentorship
+                $this->mentorshipId = $data['mentorship_id'];
+                $this->description = $data['description'];
+                $this->date = DateTime::createFromFormat('y-m-d', $data['date']);
+                $this->studentsIds = $this->getStudentsIds();
+            } 
+            else 
+            {
+                $this->date = new DateTime();
+                $stmt = $this->dbCnx->prepare("INSERT INTO Mentorship (mentor_id, description, date) VALUES (?, ?, ?)");
+                $stmt->execute([
+                    $this->mentorId,
+                    $this->description,
+                    $this->date->format('y-m-d')
+                ]);
+                $this->mentorshipId = $this->dbCnx->lastInsertId();
+                $stmt = $this->dbCnx->prepare("SELECT userId FROM Alumni WHERE userId = ? AND verified = 1 AND mentor = 1");
+                $stmt->execute([$this->mentorId]);
+                if (!$stmt->fetch()) {
+                    throw new Exception("Alumni is not verified or not registered as mentor");
+                }
             }
         }
     }
@@ -56,6 +67,9 @@ class Mentorship {
         $stmt = $this->dbCnx->prepare("INSERT INTO Student_Mentor (student_id, mentor_id) VALUES (?, ?)");
         $stmt->execute([$studentId, $this->mentorId]);
         $this->studentsIds = $this->updateStudentsIds();
+
+        $message = "New Student has been added to your mentorship " . $studentId;
+        $this->notify($message);
     }
 
     public function removeStudent(int $studentId): void {
