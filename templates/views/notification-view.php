@@ -1,7 +1,6 @@
 <?php
 
 $newsletterSubject = new Newsletter();
-$mentorshipSubject = new Mentorship();
 $eventSubject = new Event();
 // Display names mapping
 $displayNames = [
@@ -58,7 +57,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 if (!isset($isNewsletterSubscribed)) {
     try {
         $isNewsletterSubscribed = $newsletterSubject->isSubscribed($user);
-        $isMentorshipSubscribed = $mentorshipSubject->isSubscribed($user);
         $isEventSubscribed = $eventSubject->isSubscribed($user);
     } catch (Exception $e) {
         $errorMsg = "Error loading subscription data: " . $e->getMessage();
@@ -157,7 +155,7 @@ $notifications = $user->getNotifications();
         <?php endif; ?>
 
         <!-- Subscription Cards -->
-        <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+        <div class="row row-cols-1 row-cols-md-2 g-4 mb-5">
             <!-- Newsletter Card -->
             <div class="col">
                 <div class="card h-100 shadow-sm">
@@ -187,42 +185,6 @@ $notifications = $user->getNotifications();
                                     class="btn btn-outline-secondary"
                                     <?= !$isNewsletterSubscribed ? 'disabled aria-disabled="true"' : '' ?>>
                                     <i class="bi bi-x-circle me-1"></i> Unsubscribe
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mentorship Card -->
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-header bg-success text-white d-flex align-items-center">
-                        <i class="bi bi-person-plus-fill me-2"></i> New Student Alerts
-                    </div>
-                    <div class="card-body text-center">
-                        <div class="subscription-icon text-success">
-                            <i class="bi bi-mortarboard"></i>
-                        </div>
-                        <p class="card-text mb-4">
-                            Get notified when new students join your mentorship program or request guidance.
-                        </p>
-                        <div class="d-flex align-items-center justify-content-center mb-3">
-                            <span class="status-indicator <?= $isMentorshipSubscribed ? 'status-active' : 'status-inactive' ?>"></span>
-                            <span><?= $isMentorshipSubscribed ? 'Currently Active' : 'Not Active' ?></span>
-                        </div>
-                        <form method="post">
-                            <input type="hidden" name="subjectType" value="mentorship">
-                            <div class="d-grid gap-2">
-                                <button type="submit" name="action" value="subscribe" 
-                                    class="btn btn-lg <?= $isMentorshipSubscribed ? 'btn-success disabled' : 'btn-success' ?>"
-                                    <?= $isMentorshipSubscribed ? 'disabled aria-disabled="true"' : '' ?>>
-                                    <?= $isMentorshipSubscribed ? '<i class="bi bi-check2-circle me-1"></i> Alerts Active' : '<i class="bi bi-bell me-1"></i> Enable Alerts' ?>
-                                </button>
-                                <button type="submit" name="action" value="unsubscribe" 
-                                    class="btn btn-outline-secondary"
-                                    <?= !$isMentorshipSubscribed ? 'disabled aria-disabled="true"' : '' ?>>
-                                    <i class="bi bi-bell-slash me-1"></i> Disable Alerts
                                 </button>
                             </div>
                         </form>

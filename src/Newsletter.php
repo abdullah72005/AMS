@@ -80,7 +80,7 @@ class Newsletter extends Subject
     {
         try {        
             $dbCnx = require('db.php');
-            $stmt = $dbCnx->prepare("DELETE FROM Newsletter WHERE Newsletter_id = (?)");
+            $stmt = $dbCnx->prepare("DELETE FROM Newsletter WHERE newsletter_id = (?)");
             $stmt->execute([$id]);
             echo "Deleting newsletter.\n";}
             catch (Exception $e) {
