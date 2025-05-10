@@ -4,8 +4,7 @@ abstract class Subject {
         try {
             $dbCnx = require('db.php');
             $stmt = $dbCnx->prepare("SELECT * FROM user_subscriptions WHERE user_id = :userId");
-            $stmt->bindParam(':userId', $user->getId());
-            $stmt->execute();
+            $stmt->execute([$user->getId()]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($result) 
             {
@@ -49,8 +48,7 @@ abstract class Subject {
         try {
             $dbCnx = require('db.php');
             $stmt = $dbCnx->prepare("SELECT * FROM user_subscriptions WHERE user_id = :userId");
-            $stmt->bindParam(':userId', $user->getId());
-            $stmt->execute();
+            $stmt->execute([$user->getId()]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($result) 
             {
