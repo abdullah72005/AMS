@@ -2,7 +2,7 @@
 require_once 'User.php';
 require_once __DIR__ . '/Donation.php';
 
-class Alumni extends User
+class Alumni extends User implements Observer
 {
     private $mentorStatus; 
     private $verfied;
@@ -31,7 +31,6 @@ class Alumni extends User
     {
         // init db
         $dbCnx = require('db.php');
-
         $stmt = $dbCnx->prepare("UPDATE Alumni SET mentor = ? WHERE userId = ?");
         $stmt->execute([$newMentorStatus, $this->getID()]);
         $this->mentorStatus = $newMentorStatus;
@@ -221,7 +220,22 @@ class Alumni extends User
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_COLUMN); // Fetch as a flat array of userIds
     }
-    
+    public function update($message)
+    {
+        // init db
+        $dbCnx = require('db.php');
+        $id = $this::getIDFromUsername($this->getUsername());
+        $stmt = $dbCnx->prepare("INSERT INTO notifications (user_id, message) VALUES (?, ?)");
+        $stmt->execute([$id,$message]);
+    }
+    public function getNotifications()
+    {
+        // init db
+        $dbCnx = require('db.php');
+        $stmt = $dbCnx->prepare("SELECT * FROM notifications WHERE user_id = ?");
+        $stmt->execute([$this->getId()]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 ?>
