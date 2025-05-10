@@ -275,7 +275,7 @@ class Alumni extends User implements Observer
     {
         // init db
         $dbCnx = require('db.php');
-        $stmt = $dbCnx->prepare("SELECT * FROM Notification WHERE user_id = ?");
+        $stmt = $dbCnx->prepare("SELECT * FROM Notification WHERE user_id = ? ORDER BY notification_id DESC");
         $stmt->execute([$this->getId()]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

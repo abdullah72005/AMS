@@ -94,8 +94,9 @@ class Newsletter extends Subject
                 $dbCnx = require('db.php');
                 $stmt = $dbCnx->prepare("UPDATE Newsletter SET title = ?, body = ?, publishedState = ? WHERE newsletter_id = ?");
                 $stmt->execute([$this->title, $this->body, $this->getIntState(), $this->id]);
+                
                 if ($this->getIntState() == 1) {
-                    $this->notify("Newsletter has been published" . $this->title);
+                    $this->notify("Newsletter has been published: " . $this->title);
                 } 
                 return $this->id;
             } catch (Exception $e) {
@@ -107,8 +108,9 @@ class Newsletter extends Subject
                 $stmt = $dbCnx->prepare("INSERT INTO Newsletter (title, body, creatorId, publishedstate) VALUES (?, ?, ?, ?)");
                 $stmt->execute([$this->title, $this->body, $this->creatorId,$this->getIntState()]);
                 $this->id = $dbCnx->lastInsertId();
+                
                 if ($this->getIntState() == 1) {
-                    $this->notify("Newsletter has been published" . $this->title);
+                    $this->notify("Newsletter has been published: " . $this->title);
                 }
                 return $dbCnx->lastInsertId();
                 }
