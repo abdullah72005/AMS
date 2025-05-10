@@ -1,6 +1,4 @@
 <?php
-
-
 $manager = $_SESSION['userObj'] ?? null;
 $userType = $manager ? User::getRole($manager->getUsername()) : null;
 
@@ -44,24 +42,126 @@ try {
 }
 ?>
 
+<!-- Custom CSS -->
+<style>
+    .event-card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+    
+    .event-card:hover {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        transform: translateY(-5px);
+    }
+    
+    .event-title {
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .event-table {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
+    }
+    
+    .event-table th {
+        background-color: #f8f9fa;
+        border-color: #f0f0f0;
+        font-weight: 600;
+        width: 30%;
+    }
+    
+    .event-table td {
+        border-color: #f0f0f0;
+    }
+    
+    .btn-event {
+        padding: 10px 24px;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-event:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-join {
+        background: linear-gradient(135deg, #34c759, #28a745);
+        border: none;
+    }
+    
+    .btn-view {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        border: none;
+    }
+    
+    .custom-modal .modal-content {
+        border: none;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    }
+    
+    .custom-modal .modal-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .participant-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .participant-item {
+        padding: 12px 16px;
+        border-left: none;
+        border-right: none;
+        border-color: #f0f0f0;
+        transition: background-color 0.2s ease;
+    }
+    
+    .participant-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .alert-custom {
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+</style>
+
 <div class="container py-5">
     <?php if ($successMsg): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?php echo htmlspecialchars($successMsg); ?>
+        <div class="alert alert-success alert-dismissible fade show alert-custom mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <?php echo htmlspecialchars($successMsg); ?>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php elseif ($errorMsg): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?php echo htmlspecialchars($errorMsg); ?>
+        <div class="alert alert-danger alert-dismissible fade show alert-custom mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <?php echo htmlspecialchars($errorMsg); ?>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
 
-    <div class="card shadow rounded-4">
-        <div class="card-body p-4">
-            <h2 class="text-center mb-4"><?php echo htmlspecialchars($eventName); ?></h2>
+    <div class="card event-card">
+        <div class="card-body p-4 p-md-5">
+            <h2 class="event-title text-center"><?php echo htmlspecialchars($eventName); ?></h2>
 
-            <table class="table table-bordered">
+            <table class="table table-bordered event-table mb-4">
                 <tbody>
                     <tr>
                         <th scope="row">Description</th>
@@ -74,14 +174,16 @@ try {
                 </tbody>
             </table>
 
-            <div class="text-center mt-4">
+            <div class="text-center mt-5">
                 <?php if ($userType === 'Alumni'): ?>
                     <form method="POST" class="d-inline">
-                        <button type="submit" class="btn btn-success">Join Event</button>
+                        <button type="submit" class="btn btn-success btn-event btn-join">
+                            <i class="bi bi-person-plus me-2"></i>Join Event
+                        </button>
                     </form>
                 <?php elseif ($userType === 'FacultyStaff'): ?>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#participantsModal">
-                        Show Participants
+                    <button class="btn btn-primary btn-event btn-view" data-bs-toggle="modal" data-bs-target="#participantsModal">
+                        <i class="bi bi-people me-2"></i>Show Participants
                     </button>
                 <?php endif; ?>
             </div>
@@ -90,25 +192,36 @@ try {
 </div>
 
 <?php if ($userType === 'FacultyStaff'): ?>
-    
 <!-- Modal for Faculty/Staff -->
-<div class="modal fade" id="participantsModal" tabindex="-1" aria-labelledby="participantsModalLabel" aria-hidden="true">
+<div class="modal fade custom-modal" id="participantsModal" tabindex="-1" aria-labelledby="participantsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4">
             <div class="modal-header">
-                <h5 class="modal-title" id="participantsModalLabel">Participants</h5>
+                <h5 class="modal-title" id="participantsModalLabel">
+                    <i class="bi bi-people-fill me-2"></i>Event Participants
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
                 <?php if (!empty($participants)): ?>
-                    <ul class="list-group">
-                        <?php foreach ($participants as $name): ?>
-                            <li class="list-group-item"><?php echo htmlspecialchars($name); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
+                    <div class="participant-list">
+                        <ul class="list-group list-group-flush">
+                            <?php foreach ($participants as $name): ?>
+                                <li class="list-group-item participant-item">
+                                    <i class="bi bi-person me-2"></i><?php echo htmlspecialchars($name); ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
                 <?php else: ?>
-                    <p class="text-muted">No participants yet.</p>
+                    <div class="text-center py-4">
+                        <i class="bi bi-calendar-x" style="font-size: 2rem; opacity: 0.3;"></i>
+                        <p class="text-muted mt-3">No participants have joined this event yet.</p>
+                    </div>
                 <?php endif; ?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

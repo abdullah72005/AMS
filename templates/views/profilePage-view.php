@@ -95,53 +95,217 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['updateProfile'])) {
 }
 ?>
 
+<!-- Add custom CSS for enhanced aesthetics -->
+<style>
+    .profile-card {
+        border-radius: 12px;
+        border: none;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .profile-header {
+        border-radius: 12px 12px 0 0;
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        padding: 20px;
+    }
+    
+    .profile-body {
+        padding: 30px;
+    }
+    
+    .profile-info-item {
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .profile-info-label {
+        font-weight: 600;
+        color: #495057;
+        min-width: 140px;
+    }
+    
+    .profile-info-value {
+        color: #212529;
+    }
+    
+    .badge-mentor {
+        background-color: #28a745;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    
+    .badge-verified {
+        background-color: #17a2b8;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    
+    .edit-section {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 25px;
+        margin-top: 25px;
+    }
+    
+    .form-control, .form-select {
+        border-radius: 6px;
+        padding: 10px 15px;
+        border: 1px solid #ced4da;
+        transition: all 0.2s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+    }
+    
+    .btn-update {
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-update:hover {
+        background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+    }
+    
+    .password-fieldset {
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        position: relative;
+    }
+    
+    .password-legend {
+        width: auto;
+        padding: 0 10px;
+        margin-bottom: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #495057;
+    }
+    
+    .alert-styled {
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 25px;
+        border-left: 5px solid #dc3545;
+    }
+</style>
+
 <?php if (!empty($errorMsg)): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($errorMsg); ?></div>
-    <?php elseif (!empty($userData)): ?>
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><?php echo htmlspecialchars($userData['username']); ?>'s Profile</h4>
+    <div class="alert alert-danger alert-styled">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <?php echo htmlspecialchars($errorMsg); ?>
+    </div>
+<?php elseif (!empty($userData)): ?>
+    <div class="card shadow-lg profile-card">
+        <div class="card-header profile-header text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-user-circle me-2"></i>
+                <?php echo htmlspecialchars($userData['username']); ?>'s Profile
+            </h4>
+        </div>
+        <div class="card-body profile-body">
+            <!-- Static Profile Info with enhanced styling -->
+            <div class="profile-info-item">
+                <span class="profile-info-label">Role:</span>
+                <span class="profile-info-value"><?php echo htmlspecialchars($userData['role']); ?></span>
             </div>
-            <div class="card-body">
 
-                <!-- Static Profile Info -->
-                <div class="mb-3"><strong>Role:</strong> <?php echo htmlspecialchars($userData['role']); ?></div>
-
-                <?php if ($userData['role'] === 'Alumni'): ?>
-                    <div class="mb-2"><strong>Mentor:</strong> <?php echo $userData['mentor'] ? 'Yes' : 'No'; ?></div>
-                    <div class="mb-2"><strong>Verified:</strong> <?php echo $userData['verified'] ? 'Yes' : 'No'; ?></div>
-                    <div class="mb-2"><strong>Graduation Date:</strong> 
+            <?php if ($userData['role'] === 'Alumni'): ?>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Mentor Status:</span>
+                    <span class="profile-info-value">
+                        <?php if($userData['mentor']): ?>
+                            <span class="badge-mentor"><i class="fas fa-check-circle me-1"></i>Mentor</span>
+                        <?php else: ?>
+                            <span>Not a mentor</span>
+                        <?php endif; ?>
+                    </span>
+                </div>
+                
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Verification:</span>
+                    <span class="profile-info-value">
+                        <?php if($userData['verified']): ?>
+                            <span class="badge-verified"><i class="fas fa-shield-alt me-1"></i>Verified</span>
+                        <?php else: ?>
+                            <span>Not verified</span>
+                        <?php endif; ?>
+                    </span>
+                </div>
+                
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Graduation Date:</span>
+                    <span class="profile-info-value">
                         <?php echo !empty($userData['graduationDate']) ? htmlspecialchars($userData['graduationDate']) : 'Not yet specified'; ?>
-                    </div>
-                    <div class="mb-2"><strong>Major:</strong> 
+                    </span>
+                </div>
+                
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Major:</span>
+                    <span class="profile-info-value">
                         <?php echo !empty($userData['major']) ? htmlspecialchars($userData['major']) : 'Not yet specified'; ?>
-                    </div>
-                <?php elseif ($userData['role'] === 'Student'): ?>
-                    <div class="mb-2"><strong>Major:</strong> 
+                    </span>
+                </div>
+            <?php elseif ($userData['role'] === 'Student'): ?>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Major:</span>
+                    <span class="profile-info-value">
                         <?php echo !empty($userData['major']) ? htmlspecialchars($userData['major']) : 'Not yet specified'; ?>
-                    </div>
-                <?php endif; ?>
+                    </span>
+                </div>
+            <?php endif; ?>
 
-                <!-- Editable Form for Current User -->
-                <?php if (isset($isOwner) && $isOwner): ?>
-                    <hr>
-                    <h5>Edit Your Profile</h5>
-                    <form method="post" class="row g-3">
+            <!-- Editable Form for Current User -->
+            <?php if (isset($isOwner) && $isOwner): ?>
+                <div class="edit-section">
+                    <h5 class="mb-4"><i class="fas fa-edit me-2"></i>Edit Your Profile</h5>
+                    <form method="post" class="row g-4">
                         <div class="col-md-6">
                             <label for="username" class="form-label">New Username</label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Leave blank to keep current">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Leave blank to keep current">
+                            </div>
                         </div>
+                        
                         <div class="col-12">
-                            <fieldset class="border rounded-3 p-3">
-                                <legend class="float-none w-auto px-2">Change Password</legend>
+                            <fieldset class="password-fieldset">
+                                <legend class="password-legend"><i class="fas fa-lock me-2"></i>Change Password</legend>
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="oldPassword" class="form-label">Current Password</label>
-                                        <input type="password" class="form-control" id="oldPassword" name="oldPassword" placeholder="Required to change password">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                            <input type="password" class="form-control" id="oldPassword" name="oldPassword" placeholder="Required to change password">
+                                        </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="newPassword" class="form-label">New Password</label>
-                                        <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Leave blank to keep current">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                            <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Leave blank to keep current">
+                                        </div>
                                     </div>
                                 </div>
                             </fieldset>
@@ -150,28 +314,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['updateProfile'])) {
                         <?php if ($userData['role'] === 'Alumni' || $userData['role'] === 'Student'): ?>
                             <div class="col-md-6">
                                 <label for="major" class="form-label">Major</label>
-                                <select class="form-select" id="major" name="major">
-                                    <option value="">Select a major</option>
-                                    <?php foreach ($validMajors as $major): ?>
-                                        <option value="<?php echo htmlspecialchars($major); ?>"><?php echo htmlspecialchars($major); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
+                                    <select class="form-select" id="major" name="major">
+                                        <option value="">Select a major</option>
+                                        <?php foreach ($validMajors as $major): ?>
+                                            <option value="<?php echo htmlspecialchars($major); ?>"><?php echo htmlspecialchars($major); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
                             </div>
                         <?php endif; ?>
 
                         <?php if ($userData['role'] === 'Alumni'): ?>
                             <div class="col-md-6">
                                 <label for="graduationDate" class="form-label">Graduation Date</label>
-                                <input type="date" class="form-control" id="graduationDate" name="graduationDate" max="<?php echo date('Y-m-d'); ?>">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                    <input type="date" class="form-control" id="graduationDate" name="graduationDate" max="<?php echo date('Y-m-d'); ?>">
+                                </div>
                             </div>
                         <?php endif; ?>
 
-                        <div class="col-12">
-                            <button type="submit" name="updateProfile" class="btn btn-success">Update Profile</button>
+                        <div class="col-12 text-center mt-4">
+                            <button type="submit" name="updateProfile" class="btn btn-success btn-update">
+                                <i class="fas fa-save me-2"></i>Update Profile
+                            </button>
                         </div>
                     </form>
-                <?php endif; ?>
-            </div>
+                </div>
+            <?php endif; ?>
         </div>
-    <?php endif; ?>
-</div>
+    </div>
+<?php endif; ?>
