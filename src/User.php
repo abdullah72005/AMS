@@ -260,12 +260,13 @@ abstract class User
         $dbCnx = require('db.php');
 
         // check input
-        if (empty($userId)) {
+        if (empty($username)) {
             throw new InvalidArgumentException("No user with this username.");
         }
-        // Get username from user ID
-        $stmt = $dbCnx->prepare("SELECT userId FROM User WHERE username = ?");
+        // Get Id from username
+        $stmt = $dbCnx->prepare("SELECT user_id FROM User WHERE username = ?");
         $stmt->execute([$username]);
+
         return $stmt->fetchColumn();
     }
 
@@ -306,11 +307,8 @@ abstract class User
         return $role ?: null;
     }
 
-    public function searchAlumni($username)
+    public static function searchAlumni($username)
     {
-        // init db
-        $dbCnx = require('db.php');
-
         // check input
         if (empty($username)) {
             throw new InvalidArgumentException("Username cannot be empty.");
@@ -318,11 +316,13 @@ abstract class User
         if (!is_string($username)) {
             throw new InvalidArgumentException("Username must be strings.");
         }
+        $role = User::getRole($username);
+        if ($role !== 'Alumni') {
+            throw new Exception("User is not an Alumni.");
+        }
 
-        // search for alumni
-        $stmt = $dbCnx->prepare("SELECT User.username, Alumni.graduationDate, Alumni.major Alumni.mentor FROM Alumni INNER JOIN User ON Alumni.userId User.user_id WHERE User.username = ?;");
-        $stmt->execute([$username]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        //get id from username
+        return User::getIDFromUsername($username);
     }
 
     public static function getAllUserData($userId)

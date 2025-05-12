@@ -5,6 +5,8 @@ if (session_status() == PHP_SESSION_NONE) {
     ob_start(); // Start output buffering
     session_start();
 }
+require_once("../src/User.php");
+
 // Get current page filename
 $current_page = basename($_SERVER['PHP_SELF']);
 
@@ -18,6 +20,29 @@ if (!in_array($current_page, $excluded_pages)) {
         exit();
     }
 }
+if (isset($_POST['search'])) {
+    // Sanitize input
+    $username = htmlspecialchars($_POST['username']);
+    
+    try{
+      // Get alumni ID from search function
+      $alumniId = User::searchAlumni($username);
+      
+      if ($alumniId) {
+          // Redirect to profile page if found
+          header("Location: profilepage.php?profileId=$alumniId");
+          exit();
+      } else {
+          // Show error message if not found
+          echo '<div class="alert alert-danger mt-2">Alumni not found</div>';
+      }
+    }
+    catch (Exception $e) {
+      // Handle exception if needed
+      echo '<div class="alert alert-danger mt-2">No Alumni with this username.</div>';
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,13 +71,12 @@ if (!in_array($current_page, $excluded_pages)) {
       </ul>
 
       <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
-              <form class="d-flex me-2" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+        <form method="post" class="d-flex me-2" role="search">
+            <input class="form-control me-2" type="search" name="username" placeholder="Search Alumni" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit" name="search">Search</button>
+        </form>
         <form method="post" action="/logout.php" class="d-flex">
-          <button class="btn btn-outline-danger" type="submit">Logout</button>
-          
+            <button class="btn btn-outline-danger" type="submit">Logout</button>
         </form>
       <?php endif; ?>
     </div>
