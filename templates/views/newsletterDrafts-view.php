@@ -27,11 +27,11 @@
                         </div>
                     </div>
                     <div class="draft-footer">
-                        <span class="draft-status">
+                        <span class="draft-status" style="background-color: #f0ad4e;">
                             <i class="bi bi-pencil-square"></i> Draft
                         </span>
-                        <a href="createnewsletter.php?id=<?= $newsletter->getId() ?>" class="btn btn-view">
-                            <i class="bi bi-eye"></i> View & Edit
+                        <a href="createnewsletter.php?id=<?= $newsletter->getId() ?>" class="btn btn-view" style="background-color: #aaa;">
+                            <i class="bi bi-eye" ></i> View & Edit
                         </a>
                     </div>
                 </div>

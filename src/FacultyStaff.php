@@ -119,7 +119,7 @@ class FacultyStaff extends User{
     public function getAllDonations(){
     try {        
         $dbCnx = require('db.php');
-        $stmt = $dbCnx->prepare("SELECT * FROM donation order by donation_id desc");
+        $stmt = $dbCnx->prepare("SELECT * FROM Donation order by donation_id desc");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);}
         catch (Exception $e) {
