@@ -11,7 +11,6 @@ class FacultyStaff extends User{
 
     public function register_user($password, $role)
     {
-        // init db
         $dbCnx = require('db.php');
 
         try {
@@ -19,7 +18,7 @@ class FacultyStaff extends User{
             $stmt = $dbCnx->prepare("INSERT INTO FacultyStaff (user_id) VALUES (:user_id)");
             $stmt->bindParam(':user_id', $id);
             $stmt->execute();
-            $this->login_user($password); // Log in the user after registration
+            $this->login_user($password); 
             return $id;
         }
         catch (Exception $e) {
@@ -28,17 +27,14 @@ class FacultyStaff extends User{
     }
 
     public function scheduleEvent(string $name, string $description, DateTime $date): int {
-        // init db
         $dbCnx = require('db.php');
 
-        // check if event exists with this name
         $stmt = $dbCnx->prepare("SELECT eventId FROM `Event` WHERE name = ?");
         $stmt->execute([$name]);
         $eventId = $stmt->fetchColumn();
         if ($eventId) {
             throw new Exception("Event with this name already exists.");
         }
-        // check if event date is in the past
         $currentDate = new DateTime();
         if ($date <= $currentDate) {
             throw new Exception("Event date cannot be in the past.");
@@ -51,7 +47,6 @@ class FacultyStaff extends User{
     }
 
     public function getEventParticipants($eventId) {
-        // init db
         $dbCnx = require('db.php');
 
         $stmt = $dbCnx->prepare("
@@ -62,7 +57,6 @@ class FacultyStaff extends User{
             ");
         $stmt->execute([$eventId]);
 
-        // Fetch all usernames as an array
         $usernames = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         return $usernames;
@@ -70,7 +64,6 @@ class FacultyStaff extends User{
         
 
     public static function deleteEvent(int $eventId) {
-        // init db
         $dbCnx = require('db.php');
 
         $stmt = $dbCnx->prepare("DELETE FROM `Event` WHERE eventId = ?");
@@ -81,22 +74,18 @@ class FacultyStaff extends User{
   
 
     public function editEventName($eventId, $newName): void {
-        // init db
         $dbCnx = require('db.php');
 
-        // check if event exists with this name
         $stmt = $dbCnx->prepare("SELECT eventId FROM `Event` WHERE name = ?");
         $stmt->execute([$newName]);
         if ($stmt->fetchColumn()) {
             throw new Exception("Event with this name already exists.");
         }
-        //update event name in db
         $stmt = $dbCnx->prepare("UPDATE `Event` SET name = ? WHERE eventId = ?");
         $stmt->execute([$newName, $eventId]);
     }
 
     public function editEventDescription($eventId, $newDescription): void {
-        // init db
         $dbCnx = require('db.php');
 
         $stmt = $dbCnx->prepare("UPDATE `Event` SET description = ? WHERE eventId = ?");
@@ -104,11 +93,10 @@ class FacultyStaff extends User{
     }
 
     public function editEventDate($eventId, $newDate): void {
-        // init db
         $dbCnx = require('db.php');
     
         $currentDate = new DateTime();
-        $inputDate = new DateTime($newDate); // Convert string to DateTime
+        $inputDate = new DateTime($newDate); 
     
         if ($inputDate < $currentDate) {
             throw new Exception("Event date cannot be in the past.");
@@ -142,7 +130,6 @@ class FacultyStaff extends User{
         return new Newsletter($this->getId(), $title,  $body, $state, $id);
     }
     public function getNewsletter($id) {
-        // init db
         try {        
             $dbCnx = require('db.php');
             $stmt = $dbCnx->prepare("SELECT * FROM Newsletter WHERE Newsletter_id = ?");
@@ -169,7 +156,6 @@ class FacultyStaff extends User{
     {
         $arr1 = parent::getAllUserData($userId);
 
-        // init db
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("SELECT * FROM `FacultyStaff` WHERE user_id = :user_id");
         $stmt->bindParam(':user_id', $userId);
@@ -180,10 +166,8 @@ class FacultyStaff extends User{
     }
 
     public function verifyAlumni($Id): void {
-        // init db
         $dbCnx = require('db.php');
 
-        // check if alumni exists
         $stmt = $dbCnx->prepare("SELECT userId FROM `Alumni` WHERE userId = ?");
         $stmt->execute([$Id]);
         $alumniId = $stmt->fetchColumn();
@@ -191,7 +175,6 @@ class FacultyStaff extends User{
             throw new Exception("Alumni with this ID does not exist.");
         }
 
-        // verify alumni
         $stmt = $dbCnx->prepare("UPDATE `Alumni` SET verified = 1 WHERE userId = ?");
         $stmt->execute([$alumniId]);
     }

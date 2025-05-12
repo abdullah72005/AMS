@@ -1,0 +1,126 @@
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 1.25rem 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+h1 {
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.table {
+    margin-bottom: 0;
+    border: none;
+}
+
+.table th {
+    background-color: #4e73df;
+    color: white;
+    font-weight: 500;
+    border: none;
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+}
+
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-color: #f0f0f0;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9fafc;
+}
+
+.table tr {
+    transition: all 0.2s;
+}
+
+.table tbody tr:hover {
+    background-color: #eef2ff !important;
+}
+
+.btn-verify {
+    background-color: #4e73df;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    color: white;
+    font-weight: 500;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(78, 115, 223, 0.15);
+}
+
+.btn-verify:hover {
+    background-color: #3a5fc8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(78, 115, 223, 0.25);
+}
+
+.btn-verify:active {
+    transform: translateY(0);
+}
+
+.alert {
+    border: none;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.alert-danger {
+    background-color: #fff5f5;
+    color: #e53e3e;
+    border-left: 4px solid #e53e3e;
+}
+
+.badge {
+    padding: 0.5rem 0.75rem;
+    border-radius: 30px;
+    font-weight: 500;
+    font-size: 0.75rem;
+}
+
+.badge-light {
+    background-color: #f7fafc;
+    color: #4a5568;
+    border: 1px solid #edf2f7;
+}
+
+@keyframes checkmark {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.btn-verify:focus::before {
+    content: "✓";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #48bb78;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    animation: checkmark 0.5s ease-out forwards;
+}

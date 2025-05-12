@@ -6,7 +6,7 @@ $mentors = [];
 $searchTerm = "";
 $majors = [];
 
-// Check if user is logged in and is a Student
+
 if (!isset($_SESSION['userObj']) || !($_SESSION['userObj'] instanceof Student)) {
     header("Location: index.php");
     exit();
@@ -14,11 +14,11 @@ if (!isset($_SESSION['userObj']) || !($_SESSION['userObj'] instanceof Student)) 
 
 $student = $_SESSION['userObj'];
 
-// Get student's current mentorship info
+
 $mentorshipInfo = $student->getCurrentMentorship();
 $hasMentor = !empty($mentorshipInfo);
 
-// Get unique majors from all mentors
+
 try {
     $allMentors = $student->seeAllMentors();
     $majors = array_column($allMentors, 'major');
@@ -26,7 +26,7 @@ try {
     $errorMsg = "Error loading mentor data: " . $e->getMessage();
 }
 
-// Handle form submissions
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         if (isset($_POST['search'])) {
@@ -36,7 +36,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mentorUsername = $_POST['mentor_id'];
             $student->selectMentor($mentorUsername);
             $successMsg = "Mentor selected successfully!";
-            // Refresh mentorship info
             $mentorshipInfo = $student->getCurrentMentorship();
             $hasMentor = !empty($mentorshipInfo);
         }
@@ -45,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Load all mentors if no search
+
 if (empty($mentors) && !isset($_POST['search'])) {
     try {
         $mentors = $student->seeAllMentors();
@@ -55,140 +54,7 @@ if (empty($mentors) && !isset($_POST['search'])) {
 }
 ?>
 
-<!-- Custom CSS for enhanced UI -->
-<style>
-    .mentor-card {
-        transition: all 0.3s ease;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin-bottom: 2rem;
-    }
-    
-    .mentor-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-    }
-    
-    .card-header {
-        border-bottom: none;
-        padding: 1.2rem 1.5rem;
-        font-weight: 600;
-    }
-    
-    .card-body {
-        padding: 1.5rem;
-    }
-    
-    .search-box {
-        border-radius: 6px;
-        padding: 0.8rem 1.2rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        border: 1px solid #e0e0e0;
-        transition: all 0.2s ease;
-    }
-    
-    .search-box:focus {
-        box-shadow: 0 0 0 3px rgba(13,110,253,0.2);
-        border-color: #86b7fe;
-    }
-    
-    .btn {
-        border-radius: 6px;
-        padding: 0.8rem 1.2rem;
-        font-weight: 500;
-        transition: all 0.2s ease;
-    }
-    
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    
-    .btn-primary {
-        background: linear-gradient(45deg, #4a6bff, #2541b2);
-        border: none;
-    }
-    
-    .btn-secondary {
-        background: #f8f9fa;
-        color: #495057;
-        border: 1px solid #dee2e6;
-    }
-    
-    .btn-success {
-        background: linear-gradient(45deg, #28a745, #1e7e34);
-        border: none;
-    }
-    
-    .mentor-table {
-        border-collapse: separate;
-        border-spacing: 0;
-    }
-    
-    .mentor-table th {
-        background-color: #f8f9fa;
-        color: #495057;
-        font-weight: 600;
-        padding: 1rem;
-        border-bottom: 2px solid #dee2e6;
-    }
-    
-    .mentor-table td {
-        padding: 1rem;
-        vertical-align: middle;
-        border-bottom: 1px solid #dee2e6;
-    }
-    
-    .mentor-table tr:hover {
-        background-color: #f8f9fa;
-    }
-    
-    .current-mentor-info {
-        display: flex;
-        align-items: center;
-    }
-    
-    .current-mentor-name {
-        margin-bottom: 0.5rem;
-        color: #212529;
-        font-size: 1.25rem;
-    }
-    
-    .mentor-description-card {
-        background-color: #f8f9fa;
-        border-radius: 6px;
-        padding: 1rem;
-        height: 100%;
-    }
-    
-    .alert {
-        border-radius: 6px;
-        padding: 1rem 1.5rem;
-        margin-top: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    
-    .page-title {
-        color: #212529;
-        margin-bottom: 2rem;
-        font-weight: 700;
-    }
-    
-    .section-title {
-        color: #343a40;
-        margin-bottom: 1rem;
-        font-weight: 600;
-    }
-    
-    .no-mentors {
-        text-align: center;
-        padding: 2rem;
-        background-color: #f8f9fa;
-        border-radius: 6px;
-        color: #6c757d;
-    }
-</style>
+<link rel="stylesheet" href="./../../static/stylesheets/joinMentorship-view.css">
 
 <div class="container mt-5">
     <h2 class="page-title">Mentorship Program</h2>

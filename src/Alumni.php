@@ -30,7 +30,6 @@ class Alumni extends User implements Observer
 
     public function updateMentorStatus($newMentorStatus)
     {
-        // init db
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("UPDATE Alumni SET mentor = ? WHERE userId = ?");
         $stmt->execute([$newMentorStatus, $this->getID()]);
@@ -39,7 +38,6 @@ class Alumni extends User implements Observer
 
     public function isMentor()
     {
-        // init db
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("SELECT mentor FROM Alumni WHERE userId = ?");
         $stmt->execute([$this->getId()]);
@@ -53,7 +51,6 @@ class Alumni extends User implements Observer
 
     public function isVerfied()
     {
-        // init db
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("SELECT verified FROM Alumni WHERE userId = ?");
         $stmt->execute([$this->getId()]);
@@ -68,7 +65,6 @@ class Alumni extends User implements Observer
 
     public function setFieldOfstudy($fieldOfStudy)
     {
-        // init db
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("UPDATE Alumni SET major = ? WHERE userId = ?");
         $stmt->execute([$fieldOfStudy, $this->getId()]);
@@ -77,7 +73,6 @@ class Alumni extends User implements Observer
 
     public function getFieldOfStudy()
     {
-        // init db
         $dbCnx = require('db.php');
 
         $stmt = $dbCnx->prepare("SELECT major FROM Alumni WHERE userId = ?");
@@ -93,10 +88,9 @@ class Alumni extends User implements Observer
 
     public function getDonations()
     {
-        // init db
         try {        
         $dbCnx = require('db.php');
-        $stmt = $dbCnx->prepare("SELECT * FROM donation WHERE donor_id = :user_id order by donation_id desc");
+        $stmt = $dbCnx->prepare("SELECT * FROM Donation WHERE donor_id = :user_id order by donation_id desc");
         $stmt->bindValue(':user_id', $this->getId());
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);}
@@ -106,7 +100,6 @@ class Alumni extends User implements Observer
     }
     public function register_user($password, $role)
     {
-        // init db
         $dbCnx = require('db.php');
 
         try {
@@ -123,10 +116,8 @@ class Alumni extends User implements Observer
 
 
     public function signupForEvent(int $eventId): void {
-        // init db
         $dbCnx = require('db.php');
 
-        // check if event exists
         $stmt = $dbCnx->prepare("SELECT eventId FROM `Event` WHERE eventId = ?");
         $stmt->execute([$eventId]);
         $eventId = $stmt->fetchColumn();
@@ -134,7 +125,6 @@ class Alumni extends User implements Observer
             throw new Exception("Event with this ID does not exist.");
         }
 
-        // check if user is already signed up
         $stmt = $dbCnx->prepare("SELECT participant_id FROM EventParticipant WHERE event_id = ? AND participant_id = ?");
         $stmt->execute([$eventId, $this->getId()]);
         $participantId = $stmt->fetchColumn();  
@@ -142,7 +132,6 @@ class Alumni extends User implements Observer
             throw new Exception("You are already signed up for this event.");
         }
 
-        // check if event is in the past
         $stmt = $dbCnx->prepare("SELECT date FROM `Event` WHERE eventId = ?");
         $stmt->execute([$eventId]);
         $eventDate = $stmt->fetchColumn();
@@ -157,7 +146,6 @@ class Alumni extends User implements Observer
 
     public function login_user($password)
     {
-        // init db
         $dbCnx = require('db.php');
 
         parent::login_user($password);
@@ -183,7 +171,6 @@ class Alumni extends User implements Observer
     {
         $arr1 = parent::getAllUserData($userId);
 
-        // init db
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("SELECT * FROM Alumni WHERE userId = :user_id");
         $stmt->bindParam(':user_id', $userId);
@@ -195,16 +182,13 @@ class Alumni extends User implements Observer
 
     public function setGraduationDate($newGraduationDate)
     {
-        // init db
         $dbCnx = require('db.php');
 
-        // check if new graduation date is valid DateTime formatting
         $date = DateTime::createFromFormat('Y-m-d', $newGraduationDate);
         if (!$date || $date->format('Y-m-d') !== $newGraduationDate) {
             throw new Exception("Invalid date format. Please use YYYY-MM-DD.");
         }
 
-        // check if graduation date is in the past
         $currentDate = new DateTime();
         if ($date > $currentDate) {
             throw new Exception("Graduation date must be in the past.");
@@ -223,7 +207,6 @@ class Alumni extends User implements Observer
         if (!in_array($newMajor, $valid_majors)) {
             throw new Exception("Invalid major. Please choose from the following: " . implode(", ", $valid_majors));
         }
-        // init db
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("UPDATE Alumni SET major = :major WHERE userId = :user_id");
         $stmt->bindParam(':major', $newMajor);
@@ -234,11 +217,10 @@ class Alumni extends User implements Observer
 
     public static function getUnverifiedAlumni()
     {
-        // init db
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("SELECT userId FROM Alumni WHERE verified = 0");
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_COLUMN); // Fetch as a flat array of userIds
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
     public static function update($message, $calledClass)
@@ -255,7 +237,6 @@ class Alumni extends User implements Observer
             }
             
             $subscriptionName = $subscriptionMap[$calledClass];
-            // init db
             $dbCnx = require('db.php');
             $stmt = $dbCnx->prepare("SELECT * from user_subscriptions where $subscriptionName = 1");
             $stmt->execute();
@@ -273,7 +254,6 @@ class Alumni extends User implements Observer
 
     public function getNotifications()
     {
-        // init db
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("SELECT * FROM Notification WHERE user_id = ? ORDER BY notification_id DESC");
         $stmt->execute([$this->getId()]);

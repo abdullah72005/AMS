@@ -1,10 +1,8 @@
 <?php
-// Ensure the user role is defined
 if (!isset($userRole)) {
     $userRole = $_SESSION['role'] ?? 'Guest';
 }
 
-// Ensure $user is initialized
 $user = $_SESSION['userObj'] ?? null;
 
 if ($userRole === 'Alumni' && $user && !$user->isVerfied()) {
@@ -14,16 +12,14 @@ if ($userRole === 'Alumni' && $user && !$user->isVerfied()) {
     exit;
 }
 
-$events = FacultyStaff::getEvents(); // Returns array of event IDs
+$events = FacultyStaff::getEvents();
 
-// Handle view event action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['view_event_id'])) {
     $eventId = $_POST['view_event_id'];
     header("Location: eventPage.php?eventId=" . urlencode($eventId));
     exit();
 }
 
-// Handle delete event action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id'])) {
     $eventId = $_POST['event_id'];
     $eventDelete = FacultyStaff::deleteEvent($eventId);
@@ -32,181 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id'])) {
 }
 ?>
 
-<!-- Custom CSS for enhanced design -->
-<style>
-    .events-section {
-        background-color: #fff;
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-        padding: 2rem;
-        margin-bottom: 2rem;
-        transition: all 0.3s ease;
-    }
-    
-    .section-header {
-        color: #333;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #f0f0f0;
-        position: relative;
-    }
-    
-    .section-header:after {
-        content: '';
-        position: absolute;
-        width: 60px;
-        height: 3px;
-        background: linear-gradient(90deg, #007bff, #6610f2);
-        bottom: -2px;
-        left: 0;
-    }
-    
-    .events-table {
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.03);
-    }
-    
-    .events-table thead {
-        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    }
-    
-    .events-table th {
-        font-weight: 600;
-        color: #495057;
-        border-bottom: none;
-        padding: 1rem;
-    }
-    
-    .events-table td {
-        vertical-align: middle;
-        padding: 1rem;
-        border-color: #f0f0f0;
-    }
-    
-    .events-table tbody tr {
-        transition: all 0.2s ease;
-    }
-    
-    .events-table tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.04);
-        transform: translateY(-1px);
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-    
-    .event-name {
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    
-    .date-badge {
-        background-color: #e9f5ff;
-        color: #0d6efd;
-        border-radius: 6px;
-        padding: 0.3rem 0.75rem;
-        font-size: 0.85rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-    }
-    
-    .creator-badge {
-        color: #495057;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-    }
-    
-    .btn-action {
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    
-    .btn-action:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
-    }
-    
-    .btn-view {
-        background: linear-gradient(135deg, #17a2b8, #138496);
-        color: white;
-    }
-    
-    .btn-view:hover {
-        background: linear-gradient(135deg, #138496, #117a8b);
-        color: white;
-    }
-    
-    .btn-edit {
-        background: linear-gradient(135deg, #007bff, #0069d9);
-        color: white;
-    }
-    
-    .btn-edit:hover {
-        background: linear-gradient(135deg, #0069d9, #0062cc);
-        color: white;
-    }
-    
-    .btn-delete {
-        background: linear-gradient(135deg, #dc3545, #c82333);
-        color: white;
-    }
-    
-    .btn-delete:hover {
-        background: linear-gradient(135deg, #c82333, #bd2130);
-        color: white;
-    }
-    
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-    }
-    
-    .event-row-name {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    
-    @media (max-width: 768px) {
-        .action-buttons {
-            flex-direction: column;
-            gap: 0.3rem;
-        }
-        
-        .event-row-name {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
-        }
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 3rem 1rem;
-    }
-
-    .empty-state-icon {
-        font-size: 3rem;
-        color: #dee2e6;
-        margin-bottom: 1rem;
-    }
-
-    .empty-state-text {
-        color: #6c757d;
-        font-size: 1.1rem;
-    }
-</style>
+<link rel="stylesheet" href="./../../static/stylesheets/eventTable-view.css">
 
 <div class="events-section">
     <h2 class="section-header">All Events</h2>
@@ -270,12 +92,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id'])) {
                             <?php if ($userRole === 'FacultyStaff'): ?>
                                 <td>
                                     <div class="action-buttons">
-                                        <!-- Edit Button -->
                                         <a class="btn-action btn-edit" href="editEvent.php?eventId=<?= urlencode($eventData['eventId']) ?>">
                                             <i class="bi bi-pencil"></i> Edit
                                         </a>
 
-                                        <!-- Delete Button (in form) -->
                                         <form method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this event?');">
                                             <input type="hidden" name="event_id" value="<?= htmlspecialchars($eventData['eventId']) ?>">
                                             <button type="submit" class="btn-action btn-delete">

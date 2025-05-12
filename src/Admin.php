@@ -15,10 +15,9 @@ class Admin extends User
 
     public function createUser($username, $password, $role)
     {
-        // init db
         $dbCnx = require('db.php');
 
-        // Validate inputs
+
         if (empty($username) || empty($password) || empty($role)) {
             throw new InvalidArgumentException("Username, password, and role cannot be empty.");
         }
@@ -31,14 +30,14 @@ class Admin extends User
             throw new InvalidArgumentException("Invalid role specified.");
         }
 
-        // Check username availability
+
         $stmt = $dbCnx->prepare("SELECT COUNT(*) FROM User WHERE username = ?");
         $stmt->execute([$username]);
         if ($stmt->fetchColumn() > 0) {
             throw new Exception("Username already exists.");
         }
 
-        // Insert new user
+
         $stmt = $dbCnx->prepare("INSERT INTO User (username, password_hash, role) VALUES (?, ?, ?)");
         $stmt->execute([
             $username,
@@ -65,10 +64,9 @@ class Admin extends User
 
     public function updateUserData($userId, $newUsername = null, $newPassword = null, $newRole = null)
     {
-        // init db
         $dbCnx = require('db.php');
 
-        // Validate at least one parameter is provided
+
         if ($newUsername === null && $newPassword === null && $newRole === null) {
             throw new InvalidArgumentException("At least one update parameter must be provided.");
         }
@@ -76,13 +74,13 @@ class Admin extends User
         $updates = [];
         $params = [];
 
-        // Handle username update
+
         if ($newUsername !== null) {
             if (!is_string($newUsername) || empty($newUsername)) {
                 throw new InvalidArgumentException("Username must be a valid string.");
             }
 
-            // Check username availability
+
             $stmt = $dbCnx->prepare("SELECT COUNT(*) FROM User WHERE username = ? AND user_id != ?");
             $stmt->execute([$newUsername, $userId]);
             if ($stmt->fetchColumn() > 0) {
@@ -93,7 +91,7 @@ class Admin extends User
             $params[] = $newUsername;
         }
 
-        // Handle password update
+
         if ($newPassword !== null) {
             if (!is_string($newPassword) || empty($newPassword)) {
                 throw new InvalidArgumentException("Password must be a valid string.");
@@ -103,7 +101,7 @@ class Admin extends User
             $params[] = password_hash($newPassword, PASSWORD_BCRYPT);
         }
 
-        // Handle role update
+
         if ($newRole !== null) {
             if (!in_array($newRole, ['Admin', 'Alumni', 'Student', 'FacultyStaff'])) {
                 throw new InvalidArgumentException("Invalid role specified.");
@@ -113,10 +111,10 @@ class Admin extends User
             $params[] = $newRole;
         }
 
-        // Add user ID to params
+
         $params[] = $userId;
 
-        // Build and execute query
+
         $query = "UPDATE User SET " . implode(', ', $updates) . " WHERE user_id = ?";
         $stmt = $dbCnx->prepare($query);
         $stmt->execute($params);
@@ -124,16 +122,15 @@ class Admin extends User
 
     public function deleteUser($userId)
     {
-        // init db
         $dbCnx = require('db.php');
-        // Verify user exists
+
         $stmt = $dbCnx->prepare("SELECT user_id FROM User WHERE user_id = ?");
         $stmt->execute([$userId]);
         if (!$stmt->fetch()) {
             throw new Exception("User not found.");
         }
 
-        // Delete user
+
         $stmt = $dbCnx->prepare("DELETE FROM User WHERE user_id = ?");
         $stmt->execute([$userId]);
 
@@ -141,7 +138,6 @@ class Admin extends User
 
     public function getAllUsers()
     {
-        // init db
         $dbCnx = require('db.php');
 
         $stmt = $dbCnx->query("SELECT user_id, username, role FROM User");
@@ -151,7 +147,6 @@ class Admin extends User
 
     public function getUser($username)
     {
-        // init db
         $dbCnx = require('db.php');
 
         $stmt = $dbCnx->prepare("SELECT user_id, username, role FROM User WHERE username = ?");
@@ -166,7 +161,6 @@ class Admin extends User
     }
     public function register_user($password, $role)
     {
-        // init db
         $dbCnx = require('db.php');
 
         try {
@@ -174,7 +168,7 @@ class Admin extends User
             $stmt = $dbCnx->prepare("INSERT INTO Admin (user_id) VALUES (:user_id)");
             $stmt->bindParam(':user_id', $id);
             $stmt->execute();
-            $this->login_user($password); // Log in the user after registration
+            $this->login_user($password); 
             return $id;
         }
         catch (Exception $e) {
@@ -195,7 +189,7 @@ class Admin extends User
     {
         $arr1 = parent::getAllUserData($userId);
 
-        // init db
+
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("SELECT * FROM `Admin` WHERE user_id = :user_id");
         $stmt->bindParam(':user_id', $userId);

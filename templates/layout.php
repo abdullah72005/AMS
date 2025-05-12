@@ -5,19 +5,36 @@ if (session_status() == PHP_SESSION_NONE) {
     ob_start(); // Start output buffering
     session_start();
 }
-// Get current page filename
+require_once("../src/User.php");
+
 $current_page = basename($_SERVER['PHP_SELF']);
 
-// Pages that don't require authentication
 $excluded_pages = ['login.php', 'register.php'];
 
-// Only check session if not on excluded pages
 if (!in_array($current_page, $excluded_pages)) {
     if (!isset($_SESSION['username'])) {
         header('Location: login.php');
         exit();
     }
 }
+if (isset($_POST['search'])) {
+    $username = htmlspecialchars($_POST['username']);
+    
+    try{
+      $alumniId = User::searchAlumni($username);
+      
+      if ($alumniId) {
+          header("Location: profilepage.php?profileId=$alumniId");
+          exit();
+      } else {
+          echo '<div class="alert alert-danger mt-2">Alumni not found</div>';
+      }
+    }
+    catch (Exception $e) {
+      echo '<div class="alert alert-danger mt-2">No Alumni with this username.</div>';
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,13 +63,12 @@ if (!in_array($current_page, $excluded_pages)) {
       </ul>
 
       <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
-              <form class="d-flex me-2" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+        <form method="post" class="d-flex me-2" role="search">
+            <input class="form-control me-2" type="search" name="username" placeholder="Search Alumni" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit" name="search">Search</button>
+        </form>
         <form method="post" action="/logout.php" class="d-flex">
-          <button class="btn btn-outline-danger" type="submit">Logout</button>
-          
+            <button class="btn btn-outline-danger" type="submit">Logout</button>
         </form>
       <?php endif; ?>
     </div>
@@ -60,7 +76,6 @@ if (!in_array($current_page, $excluded_pages)) {
 </nav>
 
 <style>
-/* Modern Navbar Styling */
 .navbar {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 0.8rem 1rem;
@@ -144,7 +159,6 @@ if (!in_array($current_page, $excluded_pages)) {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Mobile-friendly styles */
 @media (max-width: 991.98px) {
   .navbar-collapse {
     margin-top: 1rem;

@@ -2,7 +2,6 @@
 $manager = $_SESSION['userObj'] ?? null;
 $userType = $manager ? User::getRole($manager->getUsername()) : null;
 
-// Ensure $user is initialized
 $user = $_SESSION['userObj'] ?? null;
 
 if ($userRole === 'Alumni' && $user && !$user->isVerfied()) {
@@ -52,101 +51,7 @@ try {
 }
 ?>
 
-<!-- Custom CSS -->
-<style>
-    .event-card {
-        border-radius: 12px;
-        border: none;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-    }
-    
-    .event-card:hover {
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
-        transform: translateY(-5px);
-    }
-    
-    .event-title {
-        color: #333;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #f0f0f0;
-    }
-    
-    .event-table {
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
-    }
-    
-    .event-table th {
-        background-color: #f8f9fa;
-        border-color: #f0f0f0;
-        font-weight: 600;
-        width: 30%;
-    }
-    
-    .event-table td {
-        border-color: #f0f0f0;
-    }
-    
-    .btn-event {
-        padding: 10px 24px;
-        font-weight: 500;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    
-    .btn-event:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    }
-    
-    .btn-join {
-        background: linear-gradient(135deg, #34c759, #28a745);
-        border: none;
-    }
-    
-    .btn-view {
-        background: linear-gradient(135deg, #007bff, #0056b3);
-        border: none;
-    }
-    
-    .custom-modal .modal-content {
-        border: none;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-    }
-    
-    .custom-modal .modal-header {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #f0f0f0;
-    }
-    
-    .participant-list {
-        max-height: 300px;
-        overflow-y: auto;
-    }
-    
-    .participant-item {
-        padding: 12px 16px;
-        border-left: none;
-        border-right: none;
-        border-color: #f0f0f0;
-        transition: background-color 0.2s ease;
-    }
-    
-    .participant-item:hover {
-        background-color: #f8f9fa;
-    }
-    
-    .alert-custom {
-        border-radius: 8px;
-        border: none;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    }
-</style>
+<link rel="stylesheet" href="./../../static/stylesheets/eventPage-view.css">
 
 <div class="container py-5">
     <?php if ($successMsg): ?>
@@ -202,7 +107,6 @@ try {
 </div>
 
 <?php if ($userType === 'FacultyStaff'): ?>
-<!-- Modal for Faculty/Staff -->
 <div class="modal fade custom-modal" id="participantsModal" tabindex="-1" aria-labelledby="participantsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4">
