@@ -27,7 +27,7 @@ class Student extends User
         // init db
         $dbCnx = require('db.php');
 
-        $stmt = $dbCnx->prepare("SELECT User.username, Alumni.graduationDate, Alumni.major FROM Alumni INNER JOIN User ON Alumni.userId = User.user_id WHERE Alumni.mentor = 1 AND Alumni.major = ?;");
+        $stmt = $dbCnx->prepare("SELECT User.username, Alumni.graduationDate, Alumni.major FROM Alumni INNER JOIN User ON Alumni.userId = User.user_id WHERE Alumni.mentor = 1 AND Alumni.major = ?; Order By Alumni.graduationDate DESC");
         $stmt->execute([$fieldOfstudy]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

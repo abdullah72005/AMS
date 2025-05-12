@@ -2,7 +2,6 @@
 require_once 'User.php';
 require_once 'Observer.php';
 require_once __DIR__ . '/Donation.php';
-require_once 'Observer.php';
 
 class Alumni extends User implements Observer
 {
@@ -241,6 +240,7 @@ class Alumni extends User implements Observer
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_COLUMN); // Fetch as a flat array of userIds
     }
+
     public static function update($message, $calledClass)
     {
         try{

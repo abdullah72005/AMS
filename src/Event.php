@@ -40,7 +40,7 @@ class Event extends Subject {
     }
 
     public function addEvent($creatorId){
-        $this->creatorId=$creatorId;
+        $this->creatorId = $creatorId;
         $stmt = $this->dbCnx->prepare("INSERT INTO `Event` (name, description, date, creatorId) VALUES (?, ?, ?, ?)");
         $stmt->execute([$this->name, $this->description, $this->date->format('y-m-d H:i:s'), $this->creatorId]);
         
