@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<!-- Link to external CSS file for modern aesthetic -->
+
 <link rel="stylesheet" href="./../../static/stylesheets/register-view.css">
 
 <div class="container mt-5">
@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                 <?php endif; ?>
                 
-                <!-- Button to redirect to the login page -->
+                
                 <div class="text-center">
                     <a href="login.php" class="login-link">Already have an account? Login here</a>
                 </div>

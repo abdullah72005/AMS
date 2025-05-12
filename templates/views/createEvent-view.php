@@ -4,7 +4,7 @@ $successMsg = "";
 $errorMsg = "";
 $manager=$_SESSION['userObj'];
 
-//check if user is FacultyStaff role
+
 if (!isset($_SESSION['userObj']) || !($_SESSION['userObj'] instanceof FacultyStaff)) {
     header("Location: index.php");
     exit();

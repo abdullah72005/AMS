@@ -2,17 +2,14 @@
 
 $newsletterSubject = new Newsletter();
 $eventSubject = new Event();
-// Display names mapping
 $displayNames = [
     'newsletter' => 'Newsletter Updates',
     'mentorship' => 'New Student Notifications',
     'events' => 'Event Notifications'
 ];
 
-// Initialize notifications array
 $notifications = [];
 
-// Get user object first
 $user = $_SESSION['userObj'];
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
@@ -43,7 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $subject->detach($user, $subscriptionType);
         }
 
-        // Refresh subscription statuses
         $isNewsletterSubscribed = $newsletterSubject->isSubscribed($user);
         $isMentorshipSubscribed = $mentorshipSubject->isSubscribed($user);
         $isEventSubscribed = $eventSubject->isSubscribed($user);
@@ -53,7 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
         
-// Get current statuses if not in POST
 if (!isset($isNewsletterSubscribed)) {
     try {
         $isNewsletterSubscribed = $newsletterSubject->isSubscribed($user);
@@ -69,7 +64,7 @@ $notifications = $user->getNotifications();
 <body class="bg-light">
     <div class="container py-5">
         <h1 class="page-title">Notification Preferences</h1>
-        
+
         <?php if (isset($successMsg)): ?>
             <div class="alert alert-success d-flex align-items-center fade show" role="alert">
                 <i class="bi bi-check-circle-fill me-2"></i>
@@ -77,7 +72,7 @@ $notifications = $user->getNotifications();
                 <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
-        
+
         <?php if (isset($errorMsg)): ?>
             <div class="alert alert-danger d-flex align-items-center fade show" role="alert">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -86,9 +81,7 @@ $notifications = $user->getNotifications();
             </div>
         <?php endif; ?>
 
-        <!-- Subscription Cards -->
         <div class="row row-cols-1 row-cols-md-2 g-4 mb-5">
-            <!-- Newsletter Card -->
             <div class="col">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-primary text-white d-flex align-items-center">
@@ -124,7 +117,6 @@ $notifications = $user->getNotifications();
                 </div>
             </div>
 
-            <!-- Event Card -->
             <div class="col">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-warning text-dark d-flex align-items-center">
@@ -161,7 +153,6 @@ $notifications = $user->getNotifications();
             </div>
         </div>
 
-        <!-- Notifications Section -->
         <div class="card shadow-sm">
             <div class="card-header bg-info text-white d-flex align-items-center">
                 <i class="bi bi-bell-fill me-2"></i>
@@ -176,11 +167,10 @@ $notifications = $user->getNotifications();
                         <?php foreach ($notifications as $notification): ?>
                             <?php 
                             $message = $notification['notification']; 
-                            
-                            // Determine notification type and assign appropriate icon/color
+
                             $notifType = 'info';
                             $notifIcon = 'info-circle';
-                            
+
                             if (stripos($message, 'newsletter') !== false) {
                                 $notifType = 'primary';
                                 $notifIcon = 'envelope';
@@ -218,4 +208,4 @@ $notifications = $user->getNotifications();
                 <?php endif; ?>
             </div>
         </div>
-    </div>
+    </div

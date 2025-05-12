@@ -1,10 +1,8 @@
 <?php
-// Ensure the user role is defined
 if (!isset($userRole)) {
     $userRole = $_SESSION['role'] ?? 'Guest';
 }
 
-// Ensure $user is initialized
 $user = $_SESSION['userObj'] ?? null;
 
 if ($userRole === 'Alumni' && $user && !$user->isVerfied()) {
@@ -14,16 +12,14 @@ if ($userRole === 'Alumni' && $user && !$user->isVerfied()) {
     exit;
 }
 
-$events = FacultyStaff::getEvents(); // Returns array of event IDs
+$events = FacultyStaff::getEvents();
 
-// Handle view event action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['view_event_id'])) {
     $eventId = $_POST['view_event_id'];
     header("Location: eventPage.php?eventId=" . urlencode($eventId));
     exit();
 }
 
-// Handle delete event action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id'])) {
     $eventId = $_POST['event_id'];
     $eventDelete = FacultyStaff::deleteEvent($eventId);
@@ -32,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id'])) {
 }
 ?>
 
-<!-- Link to external CSS for event table design -->
 <link rel="stylesheet" href="./../../static/stylesheets/eventTable-view.css">
 
 <div class="events-section">
@@ -97,12 +92,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id'])) {
                             <?php if ($userRole === 'FacultyStaff'): ?>
                                 <td>
                                     <div class="action-buttons">
-                                        <!-- Edit Button -->
                                         <a class="btn-action btn-edit" href="editEvent.php?eventId=<?= urlencode($eventData['eventId']) ?>">
                                             <i class="bi bi-pencil"></i> Edit
                                         </a>
 
-                                        <!-- Delete Button (in form) -->
                                         <form method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this event?');">
                                             <input type="hidden" name="event_id" value="<?= htmlspecialchars($eventData['eventId']) ?>">
                                             <button type="submit" class="btn-action btn-delete">

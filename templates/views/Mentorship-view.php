@@ -4,7 +4,6 @@ $errorMsg = "";
 $successMsg = "";
 $mentorship = null;
 
-// Check if user is logged in and is an Alumni
 if (!isset($_SESSION['userObj']) || !($_SESSION['userObj'] instanceof Alumni)) {
     header("Location: index.php");
     exit();
@@ -12,16 +11,13 @@ if (!isset($_SESSION['userObj']) || !($_SESSION['userObj'] instanceof Alumni)) {
 
 $alumni = $_SESSION['userObj'];
 
-// Handle form submissions
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         if (isset($_POST['toggleMentor'])) {
             if ($alumni->isMentor()) {
-                // Stop being a mentor
                 $alumni->updateMentorStatus(false);
                 $successMsg = "You are no longer serving as a mentor!";
             } else {
-                // Become a mentor
                 $alumni->serveAsMentor();
                 $successMsg = "You are now serving as a mentor!";
             }
@@ -39,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Load mentorship data if exists
 try {
     if ($alumni->isMentor()) {
         $mentorship = new Mentorship($alumni->getID());
@@ -56,7 +51,6 @@ try {
     
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <!-- Mentor Status Section -->
             <div class="card mentor-card">
                 <div class="card-header mentorship-header text-white">
                     <h3 class="section-title">Mentor Management</h3>
@@ -114,7 +108,6 @@ try {
                 </div>
             </div>
 
-            <!-- Current Students Section -->
             <?php if ($alumni->isMentor() && $mentorship): ?>
                 <div class="card mentor-card">
                     <div class="card-header mentorship-header text-white">
@@ -156,7 +149,6 @@ try {
                 </div>
             <?php endif; ?>
 
-            <!-- Messages -->
             <?php if (!empty($errorMsg)): ?>
                 <div class="alert alert-danger mt-4" role="alert">
                     <i class="fas fa-exclamation-circle me-2"></i>

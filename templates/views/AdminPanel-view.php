@@ -6,7 +6,6 @@ $successMsg = "";
 $userData = null;
 
 $admin = $_SESSION['userObj'];
-// Check if user is logged in and is an Admin
 if (!isset($admin) || !($admin instanceof Admin)) {
     header("Location: index.php");
     exit();

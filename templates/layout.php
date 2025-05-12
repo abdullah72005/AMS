@@ -7,13 +7,10 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 require_once("../src/User.php");
 
-// Get current page filename
 $current_page = basename($_SERVER['PHP_SELF']);
 
-// Pages that don't require authentication
 $excluded_pages = ['login.php', 'register.php'];
 
-// Only check session if not on excluded pages
 if (!in_array($current_page, $excluded_pages)) {
     if (!isset($_SESSION['username'])) {
         header('Location: login.php');
@@ -21,24 +18,19 @@ if (!in_array($current_page, $excluded_pages)) {
     }
 }
 if (isset($_POST['search'])) {
-    // Sanitize input
     $username = htmlspecialchars($_POST['username']);
     
     try{
-      // Get alumni ID from search function
       $alumniId = User::searchAlumni($username);
       
       if ($alumniId) {
-          // Redirect to profile page if found
           header("Location: profilepage.php?profileId=$alumniId");
           exit();
       } else {
-          // Show error message if not found
           echo '<div class="alert alert-danger mt-2">Alumni not found</div>';
       }
     }
     catch (Exception $e) {
-      // Handle exception if needed
       echo '<div class="alert alert-danger mt-2">No Alumni with this username.</div>';
     }
 }
@@ -84,7 +76,6 @@ if (isset($_POST['search'])) {
 </nav>
 
 <style>
-/* Modern Navbar Styling */
 .navbar {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 0.8rem 1rem;
@@ -168,7 +159,6 @@ if (isset($_POST['search'])) {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Mobile-friendly styles */
 @media (max-width: 991.98px) {
   .navbar-collapse {
     margin-top: 1rem;

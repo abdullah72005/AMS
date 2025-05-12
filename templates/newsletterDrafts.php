@@ -7,4 +7,4 @@ require_once("../src/FacultyStaff.php");
 $childView = 'views/newsletterDrafts-view.php';
 $titleView = 'AMS newsletter';
 include_once('layout.php');
-?>  
+?>

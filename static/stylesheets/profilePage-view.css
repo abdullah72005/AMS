@@ -1,4 +1,3 @@
-/* Basic styling for the profile page */
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #f9f9f9;
@@ -21,7 +20,6 @@ body {
     margin-bottom: 20px;
 }
 
-/* Profile Page Styling */
 .profile-card {
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

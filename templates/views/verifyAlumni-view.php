@@ -2,21 +2,17 @@
     $error = null;
 
     try {
-        // Restrict access to faculty staff only
         if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'FacultyStaff') {
             throw new Exception('Access Denied: You do not have permission to access this page.');
         }
 
-        // Fetch unverified alumni
         $unverifiedAlumni = Alumni::getUnverifiedAlumni();
 
-        // Fetch user data for each unverified alumni
         $alumniData = [];
-        foreach ($unverifiedAlumni as $userId) { // $userId is now a flat value
+        foreach ($unverifiedAlumni as $userId) {
             $alumniData[] = Alumni::getAllUserData($userId);
         }
 
-        // Handle POST request to verify alumni
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verifyAlumniId'])) {
             $alumniIdToVerify = $_POST['verifyAlumniId'];
             $user = $_SESSION['userObj'];

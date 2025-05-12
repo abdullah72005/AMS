@@ -11,7 +11,6 @@ class Mentorship extends Subject
 
     public function __construct($mentorId = null) {
         if (func_num_args() === 0) {
-            // Default constructor logic
             $this->mentorshipId = null;
             $this->$mentorId = '';
             $this->studentsIds = '';
@@ -22,13 +21,11 @@ class Mentorship extends Subject
             $this->dbCnx = require('db.php');
             $this->mentorId = $mentorId;
 
-            // Check for existing mentorship
             $stmt = $this->dbCnx->prepare("SELECT * FROM Mentorship WHERE mentor_id = ?");
             $stmt->execute([$this->mentorId]);
 
             if ($data = $stmt->fetch(PDO::FETCH_ASSOC)) 
             {
-                // Load existing mentorship
                 $this->mentorshipId = $data['mentorship_id'];
                 $this->description = $data['description'];
                 $this->date = DateTime::createFromFormat('y-m-d', $data['date']);
@@ -55,7 +52,6 @@ class Mentorship extends Subject
 
     public function addStudent($studentId)
     {
-        // Verify student exists
         $stmt = $this->dbCnx->prepare("SELECT user_id FROM Student WHERE user_id = ?");
         $stmt->execute([$studentId]);
         if (!$stmt->fetch()) 
@@ -63,7 +59,6 @@ class Mentorship extends Subject
             throw new Exception("Student not found");
         }
 
-        // Add to Student_Mentor table
         $stmt = $this->dbCnx->prepare("INSERT INTO Student_Mentor (student_id, mentor_id) VALUES (?, ?)");
         $stmt->execute([$studentId, $this->mentorId]);
         $this->studentsIds = $this->updateStudentsIds();

@@ -82,7 +82,6 @@ abstract class Subject {
 }
 
     public function notify($message) {
-        //this will make ali cry 
         $calledClass = get_called_class();
         Alumni::update($message, $calledClass);
     }

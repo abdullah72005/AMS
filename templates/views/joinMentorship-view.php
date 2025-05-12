@@ -6,7 +6,7 @@ $mentors = [];
 $searchTerm = "";
 $majors = [];
 
-// Check if user is logged in and is a Student
+
 if (!isset($_SESSION['userObj']) || !($_SESSION['userObj'] instanceof Student)) {
     header("Location: index.php");
     exit();
@@ -14,11 +14,11 @@ if (!isset($_SESSION['userObj']) || !($_SESSION['userObj'] instanceof Student)) 
 
 $student = $_SESSION['userObj'];
 
-// Get student's current mentorship info
+
 $mentorshipInfo = $student->getCurrentMentorship();
 $hasMentor = !empty($mentorshipInfo);
 
-// Get unique majors from all mentors
+
 try {
     $allMentors = $student->seeAllMentors();
     $majors = array_column($allMentors, 'major');
@@ -26,7 +26,7 @@ try {
     $errorMsg = "Error loading mentor data: " . $e->getMessage();
 }
 
-// Handle form submissions
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         if (isset($_POST['search'])) {
@@ -36,7 +36,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mentorUsername = $_POST['mentor_id'];
             $student->selectMentor($mentorUsername);
             $successMsg = "Mentor selected successfully!";
-            // Refresh mentorship info
             $mentorshipInfo = $student->getCurrentMentorship();
             $hasMentor = !empty($mentorshipInfo);
         }
@@ -45,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Load all mentors if no search
+
 if (empty($mentors) && !isset($_POST['search'])) {
     try {
         $mentors = $student->seeAllMentors();

@@ -6,7 +6,6 @@
     $newsletters = Newsletter::getDraftedNewsletters(); 
 ?>
 
-<!-- Link to external CSS for enhanced design -->
 <link rel="stylesheet" href="./../../static/stylesheets/newsletterDrafts-view.css">
 
 <div class="container newsletter-section">

@@ -9,10 +9,6 @@ class Newsletter extends Subject
     private $state;
     public function __construct($creatorId = null, $title = null, $body = null,State  $state = new DraftState(), $id = null)
     { 
-        //can you @ someone in the comments?
-        // @aliehab ? 
-        // why the fuck can a state be null just draft it?
-        // why did you even change this
         $this->title = $title;
         $this->body = $body;
         $this->creatorId = $creatorId;
@@ -194,7 +190,6 @@ class DraftState implements State
     }
     public function edit($newsletter,$field,$data)
     {
-        // Code to edit the newsletter in draft state
         echo "Editing newsletter in draft state.\n";
         if ($field == 'title') {
             $newsletter->setTitle($data);
@@ -206,7 +201,6 @@ class DraftState implements State
     }
     public function publish($newsletter)
     {
-        // Code to publish the newsletter from draft state
         echo "Publishing newsletter from draft state.\n";
         if ($newsletter->title == null || $newsletter->body == null) {
             echo "Cannot publish newsletter without title or body.\n";

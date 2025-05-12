@@ -14,7 +14,6 @@ class Student extends User
 
     public function selectMentor($mentorId)
     {
-        // init db
         $dbCnx = require('db.php');
 
         $stmt = $dbCnx->prepare("INSERT INTO Student_Mentor (student_id, mentor_id) VALUES (?, ?)");
@@ -24,7 +23,6 @@ class Student extends User
 
     public function search($fieldOfstudy)
     {
-        // init db
         $dbCnx = require('db.php');
 
         $stmt = $dbCnx->prepare("SELECT User.username, Alumni.graduationDate, Alumni.major FROM Alumni INNER JOIN User ON Alumni.userId = User.user_id WHERE Alumni.mentor = 1 AND Alumni.major = ?; Order By Alumni.graduationDate DESC");
@@ -34,7 +32,6 @@ class Student extends User
 
     public function register_user($password, $role)
     {
-        // init db
         $dbCnx = require('db.php');
 
         try {
@@ -42,7 +39,7 @@ class Student extends User
             $stmt = $dbCnx->prepare("INSERT INTO Student (userId) VALUES (:user_id)");
             $stmt->bindParam(':user_id', $id);
             $stmt->execute();
-            $this->login_user($password); // Log in the user after registration
+            $this->login_user($password);
             return $id;
         }
         catch (Exception $e) {
@@ -52,7 +49,6 @@ class Student extends User
 
     public function seeAllMentors()
     {
-        // init db
         $dbCnx = require('db.php');
 
         $stmt = $dbCnx->prepare("SELECT Alumni.userId, User.username, Alumni.graduationDate, Alumni.major, Mentorship.description FROM Alumni INNER JOIN User ON Alumni.userId = User.user_id INNER JOIN Mentorship ON Alumni.userId = Mentorship.mentor_id WHERE Alumni.mentor = 1;");
@@ -61,7 +57,6 @@ class Student extends User
     }
     public function getCurrentMentorship()
     {
-        // init db
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("SELECT COUNT(*) FROM Student_Mentor WHERE student_id = ?");
         $stmt->execute([$this->getID()]);
@@ -89,7 +84,6 @@ class Student extends User
     {
         $arr1 = parent::getAllUserData($userId);
 
-        // init db
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("SELECT * FROM `Student` WHERE userId = :user_id");
         $stmt->bindParam(':user_id', $userId);
@@ -105,7 +99,6 @@ class Student extends User
         if (!in_array($newMajor, $valid_majors)) {
             throw new Exception("Invalid major. Please choose from the following: " . implode(", ", $valid_majors));
         }
-        // init db
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("UPDATE Student SET major = :major WHERE userId = :user_id");
         $stmt->bindParam(':major', $newMajor);

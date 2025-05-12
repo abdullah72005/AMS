@@ -1,11 +1,11 @@
 <?php
-  $errorMsg = "";  // Initialize error message
+  $errorMsg = "";  
   
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         $username = $_POST['username'];
         $pass = $_POST['pass'];
-        $role = User::getRole($username);  // Get the role of the user
+        $role = User::getRole($username);  
         
         if ($role == "Alumni") {
             $user = new Alumni($username);
@@ -27,7 +27,6 @@
 }
 ?>
 
-<!-- Link to external CSS for enhanced UI -->
 <link rel="stylesheet" href="./../../static/stylesheets/login-view.css">
 
 <div class="container login-container">
@@ -90,7 +89,6 @@
                 
                 <div class="login-divider"></div>
                 
-                <!-- Button to redirect to the register page -->
                 <div class="text-center">
                     <a href="register.php" class="register-link">
                         <i class="fas fa-user-plus me-1"></i>

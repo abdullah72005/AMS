@@ -29,7 +29,6 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Alumni Management System</title>
-    <!-- Add your CSS links here -->
     <link rel="stylesheet" href="./../../static/stylesheets/dashboard-view.css">
 </head>
 <body>
@@ -42,7 +41,6 @@ try {
     <?php endif; ?>
 
     <?php if (isset($user) && $user instanceof Alumni): ?>
-        <!-- Alumni Dashboard -->
         <div class="glass-container">
             <div class="glass-header">
                 <h2>Welcome, <?= htmlspecialchars($user->getUsername()) ?> 👋</h2>
@@ -50,7 +48,6 @@ try {
             </div>
 
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                <!-- Profile -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-primary">📝</div>
@@ -60,7 +57,6 @@ try {
                     </div>
                 </div>
 
-                <!-- Mentorship -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-success">👥</div>
@@ -70,7 +66,6 @@ try {
                     </div>
                 </div>
 
-                <!-- Donations -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-warning">💰</div>
@@ -80,7 +75,6 @@ try {
                     </div>
                 </div>
 
-                <!-- Events -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-info">📅</div>
@@ -90,7 +84,6 @@ try {
                     </div>
                 </div>
 
-                <!-- Newsletters -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-danger">📰</div>
@@ -111,7 +104,6 @@ try {
         </div>
 
     <?php elseif (isset($user) && $user instanceof FacultyStaff): ?>
-        <!-- Faculty Dashboard -->
         <div class="glass-container">
             <div class="glass-header">
                 <h2>Welcome, <?= htmlspecialchars($user->getUsername()) ?> 👋</h2>
@@ -119,7 +111,6 @@ try {
             </div>
 
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                <!-- Verify Users -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-primary">🧾</div>
@@ -129,7 +120,6 @@ try {
                     </div>
                 </div>
 
-                <!-- Schedule Event -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-success">📅</div>
@@ -139,7 +129,6 @@ try {
                     </div>
                 </div>
 
-                <!-- Edit Event -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-danger">✏️</div>
@@ -149,7 +138,6 @@ try {
                     </div>
                 </div>
 
-                <!-- Newsletter -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-warning">📰</div>
@@ -162,7 +150,6 @@ try {
                     </div>
                 </div>
 
-                <!-- Donations -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-info">💸</div>
@@ -172,7 +159,6 @@ try {
                     </div>
                 </div>
 
-                <!-- Profile -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-primary">📝</div>
@@ -185,7 +171,6 @@ try {
         </div>
 
     <?php elseif (isset($user) && $user instanceof Student): ?>
-        <!-- Student Dashboard -->
         <div class="glass-container">
             <div class="glass-header">
                 <h2>Welcome, <?= htmlspecialchars($user->getUsername()) ?> 👋</h2>
@@ -193,7 +178,6 @@ try {
             </div>
 
             <div class="row row-cols-1 row-cols-md-3 g-4">
-                <!-- Mentorship Card -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-primary">👥</div>
@@ -203,7 +187,6 @@ try {
                     </div>
                 </div>
 
-                <!-- Newsletters Card -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-warning">📰</div>
@@ -213,7 +196,6 @@ try {
                     </div>
                 </div>
 
-                <!-- Profile Card -->
                 <div class="col">
                     <div class="card p-4">
                         <div class="card-icon text-primary">📝</div>

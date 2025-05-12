@@ -2,7 +2,6 @@
 $manager = $_SESSION['userObj'] ?? null;
 $userType = $manager ? User::getRole($manager->getUsername()) : null;
 
-// Ensure $user is initialized
 $user = $_SESSION['userObj'] ?? null;
 
 if ($userRole === 'Alumni' && $user && !$user->isVerfied()) {
@@ -52,7 +51,6 @@ try {
 }
 ?>
 
-<!-- Link to external CSS -->
 <link rel="stylesheet" href="./../../static/stylesheets/eventPage-view.css">
 
 <div class="container py-5">
@@ -109,7 +107,6 @@ try {
 </div>
 
 <?php if ($userType === 'FacultyStaff'): ?>
-<!-- Modal for Faculty/Staff -->
 <div class="modal fade custom-modal" id="participantsModal" tabindex="-1" aria-labelledby="participantsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4">

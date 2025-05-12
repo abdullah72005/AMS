@@ -1,6 +1,5 @@
 <?php 
 
-// Initialize error message
 $errorMsg = "";
 $userData = null;
 
@@ -14,7 +13,6 @@ try {
 
 if ($_SERVER["REQUEST_METHOD"] == "GET" && empty($errorMsg)) {
     try {
-        // Role-based delegation
         switch (User::getRoleById($_GET['profileId'])) {
             case 'Alumni':
                 $userData = Alumni::getAllUserData($_GET['profileId']);
@@ -29,49 +27,45 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && empty($errorMsg)) {
                 $userData = Admin::getAllUserData($_GET['profileId']);
                 break;
         }
-        
-        // Optional: normalize booleans
+
         if (isset($userData['mentor'])) {
             $userData['mentor'] = (bool)$userData['mentor'];
         }
         if (isset($userData['verified'])) {
             $userData['verified'] = (bool)$userData['verified'];
         }
-      
 
-        // Check if the viewer is the owner of the profile
         $isOwner = isset($_SESSION['username']) && $userData['username'] === $_SESSION['username'];
         if ($isOwner) {
             $userObj = $_SESSION['userObj'];
             $validMajors = User::$validMajors;
         }
-    
+
     } catch (Exception $e) {
         $errorMsg = $e->getMessage();
     }
 }
 
-
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['updateProfile'])) {
     try {
-        $userObj = $_SESSION['userObj']; // Get the logged-in user object
+        $userObj = $_SESSION['userObj'];
         if (!empty($_POST['username'])) {
             $userObj->setUsername(trim($_POST['username']));
-            $_SESSION['userObj'] = $userObj; // Update the session variable
+            $_SESSION['userObj'] = $userObj;
         }
 
         if (!empty($_POST['newPassword'])) {
             if (empty($_POST['oldPassword'])) {
                 throw new Exception("You must enter your current password to set a new one.");
             }
-        
+
             $userObj->setPassword(trim($_POST['newPassword']), trim($_POST['oldPassword']));
-            $_SESSION['userObj'] = $userObj; // Update session
+            $_SESSION['userObj'] = $userObj;
         }
 
         if (!empty($_POST['major']) && in_array($_POST['major'], User::$validMajors)) {
             $userObj->setMajor($_POST['major']);
-            $_SESSION['userObj'] = $userObj; // Update the session variable
+            $_SESSION['userObj'] = $userObj;
         }
 
         if (!empty($_POST['graduationDate'])) {
@@ -79,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['updateProfile'])) {
             $today = new DateTime();
             if ($inputDate < $today) {
                 $userObj->setGraduationDate($_POST['graduationDate']);
-                $_SESSION['userObj'] = $userObj; // Update the session variable
+                $_SESSION['userObj'] = $userObj;
 
             } else {
                 throw new Exception("Graduation date must be in the past.");
@@ -111,7 +105,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['updateProfile'])) {
             </h4>
         </div>
         <div class="card-body profile-body">
-            <!-- Static Profile Info with enhanced styling -->
             <div class="profile-info-item">
                 <span class="profile-info-label">Role:</span>
                 <span class="profile-info-value"><?php echo htmlspecialchars($userData['role']); ?></span>
@@ -128,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['updateProfile'])) {
                         <?php endif; ?>
                     </span>
                 </div>
-                
+
                 <div class="profile-info-item">
                     <span class="profile-info-label">Verification:</span>
                     <span class="profile-info-value">
@@ -139,14 +132,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['updateProfile'])) {
                         <?php endif; ?>
                     </span>
                 </div>
-                
+
                 <div class="profile-info-item">
                     <span class="profile-info-label">Graduation Date:</span>
                     <span class="profile-info-value">
                         <?php echo !empty($userData['graduationDate']) ? htmlspecialchars($userData['graduationDate']) : 'Not yet specified'; ?>
                     </span>
                 </div>
-                
+
                 <div class="profile-info-item">
                     <span class="profile-info-label">Major:</span>
                     <span class="profile-info-value">
@@ -162,7 +155,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['updateProfile'])) {
                 </div>
             <?php endif; ?>
 
-            <!-- Editable Form for Current User -->
             <?php if (isset($isOwner) && $isOwner): ?>
                 <div class="edit-section">
                     <h5 class="mb-4"><i class="fas fa-edit me-2"></i>Edit Your Profile</h5>
@@ -174,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['updateProfile'])) {
                                 <input type="text" class="form-control" id="username" name="username" placeholder="Leave blank to keep current">
                             </div>
                         </div>
-                        
+
                         <div class="col-12">
                             <fieldset class="password-fieldset">
                                 <legend class="password-legend"><i class="fas fa-lock me-2"></i>Change Password</legend>

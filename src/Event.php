@@ -11,7 +11,6 @@ class Event extends Subject {
     public function __construct($name = null, $description = null, $date = null){
         if (func_num_args() === 0) 
         {
-            // Default constructor logic
             $this->name = '';
             $this->description = '';
             $this->date = new DateTime();
@@ -23,14 +22,12 @@ class Event extends Subject {
             $this->date = $date;
             $this->dbCnx=require("db.php");    
 
-            // check if event is already created
             $stmt = $this->dbCnx->prepare("SELECT eventId FROM `Event` WHERE name = ?");
             $stmt->execute([$this->name]);
             $eventId = $stmt->fetchColumn();
             if ($eventId) {
                 $this->eventId = $eventId;
 
-                // get creatorId
                 $stmt = $this->dbCnx->prepare("SELECT creatorId FROM `Event` WHERE name = ?");
                 $stmt->execute([$this->name]);
                 $creatorId = $stmt->fetchColumn();
@@ -69,7 +66,6 @@ class Event extends Subject {
         if (!isset($creatorId)) {
             throw new Exception("This event has not been added to db yet.");
         }
-        // get user name from db
         $dbCnx = require('db.php');
         $stmt = $dbCnx->prepare("SELECT username FROM `User` WHERE user_id = ?");
         $stmt->execute([$creatorId]);   
@@ -84,7 +80,6 @@ class Event extends Subject {
 
 
     public static function getEvents() {
-        // Get DB connection (assuming db.php returns a PDO instance)
         $dbCnx = require('db.php');
 
         $stmt = $dbCnx->prepare("SELECT eventId FROM `Event`");
@@ -93,7 +88,6 @@ class Event extends Subject {
     }
 
     public function addParticipant($alumniId) {
-        // get event id 
         $stmt = $this->dbCnx->prepare("SELECT event_id FROM `Event` WHERE name = ?");
         $stmt->execute([$this->name]);
         $eventId = $stmt->fetchColumn();

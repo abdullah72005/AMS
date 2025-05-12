@@ -3,20 +3,20 @@ $successMsg = "";
 $errorMsg = "";
 $manager = $_SESSION['userObj'];
 
-// Ensure user is logged in and is FacultyStaff
+
 if (!isset($manager) || !($manager instanceof FacultyStaff)) {
     header("Location: index.php");
     exit();
 }
 
-// Get event ID from URL
+
 if (!isset($_GET['eventId'])) {
     header("Location: events_list.php");
     exit();
 }
 
 $eventId = $_GET['eventId'];
-$eventData = Event::getEventById($eventId); // Fetch existing event details
+$eventData = Event::getEventById($eventId); 
 
 if (!$eventData) {
     $errorMsg = "Event not found.";
@@ -27,26 +27,22 @@ if (!$eventData) {
     $currentDate = $currentDateObj->format('Y-m-d');
 }
 
-// Handle POST (form submission)
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     try {
         $hasChanges = false;
 
-        // Title
         if (!empty($_POST['title']) && $_POST['title'] !== $currentTitle) {
             $manager->editEventName($eventId, $_POST['title']);
             $currentTitle = $_POST['title'];
             $hasChanges = true;
         }
 
-        // Description
         if (!empty($_POST['description']) && $_POST['description'] !== $currentDescription) {
             $manager->editEventDescription($eventId, $_POST['description']);
             $currentDescription = $_POST['description'];
             $hasChanges = true;
         }
 
-        // Date
         if (!empty($_POST['date'])) {
             $newDateObj = new DateTime($_POST['date']);
             if ($newDateObj->format('Y-m-d') !== $currentDate) {
@@ -58,7 +54,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($hasChanges) {
             $successMsg = "Event updated successfully.";
-            // Optionally redirect:
             header("Location: eventPage.php?eventId=" . urlencode($eventId));
             exit();
         } else {
