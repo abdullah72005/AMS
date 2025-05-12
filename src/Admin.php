@@ -46,20 +46,6 @@ class Admin extends User
             $role
         ]);
 
-        $userId = $dbCnx->lastInsertId();
-
-        if ($role === 'Admin') {
-            $stmt = $dbCnx->prepare("INSERT INTO Admin (user_id) VALUES (:userId)");
-        } elseif ($role === 'Alumni') {
-            $stmt = $dbCnx->prepare("INSERT INTO Alumni (userId) VALUES (:userId)");
-        } elseif ($role === 'FacultyStaff') {
-            $stmt = $dbCnx->prepare("INSERT INTO FacultyStaff (user_id) VALUES (:userId)");
-        } elseif ($role === 'Student') {
-            $stmt = $dbCnx->prepare("INSERT INTO Student (userId) VALUES (:userId)");
-        }
-        $stmt->bindParam(':userId', $userId);
-        $stmt->execute();
-
         $insertedUserId = $dbCnx->lastInsertId();
 
         if ($role === 'Alumni') {
