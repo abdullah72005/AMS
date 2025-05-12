@@ -65,75 +65,7 @@ if (!isset($isNewsletterSubscribed)) {
 $notifications = $user->getNotifications();
 ?>
 
-   <style>
-        .card {
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
-        }
-        .card-header {
-            padding: 1rem;
-            font-weight: 600;
-            font-size: 1.1rem;
-            border-bottom: none;
-        }
-        .subscription-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-        .btn {
-            border-radius: 8px;
-            padding: 0.6rem 1rem;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-        .btn-lg {
-            padding: 0.8rem 1.5rem;
-        }
-        .btn-success {
-            background-color: #28a745;
-        }
-        .page-title {
-            color: #444;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 0.75rem;
-        }
-        .notification-item {
-            padding: 0.75rem 1rem;
-            margin-bottom: 0.5rem;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-            border-left: 4px solid #0d6efd;
-        }
-        .notification-timestamp {
-            font-size: 0.8rem;
-            color: #6c757d;
-        }
-        .empty-state {
-            padding: 3rem 0;
-        }
-        .empty-state i {
-            color: #dee2e6;
-        }
-        .status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-        }
-        .status-active {
-            background-color: #28a745;
-        }
-        .status-inactive {
-            background-color: #dc3545;
-        }
-    </style>
+<link rel="stylesheet" href="./../../static/stylesheets/notification-view.css">
 <body class="bg-light">
     <div class="container py-5">
         <h1 class="page-title">Notification Preferences</h1>
