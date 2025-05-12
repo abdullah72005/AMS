@@ -1,14 +1,14 @@
 <?php
-// Start the session if not already started
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Process any redirects first, before any HTML output
+
 try {
     $user = $_SESSION['userObj'];
     
-    // Handle redirects before any output is sent
+    
     if ($user instanceof Admin) {
         header('Location: AdminPanel.php');
         exit();
@@ -18,10 +18,10 @@ try {
     }
 } catch (Exception $e) {
     $errorMsg = "What is happening " . $e->getMessage();
-    // Don't exit here, as we'll display the error to the user
+    
 }
 
-// Now it's safe to send output
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

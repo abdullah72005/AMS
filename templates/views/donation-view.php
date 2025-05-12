@@ -33,7 +33,7 @@ else {
 
     <div class="container py-5">
         <div class="row g-4">
-            <!-- Left Column (Form) -->
+            
             <div class="col-md-6">
                 <div class="card form-card p-4 p-md-5">
                     <div class="d-flex align-items-center mb-4">
@@ -82,7 +82,7 @@ else {
             </div>
             <?php } ?>
             
-            <!-- Right Column (Donations Table) -->
+            
             <div class="col-md-6">
                 <div class="card table-card p-4">
                     <h3 class="section-title">

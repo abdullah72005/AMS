@@ -241,7 +241,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // Emulating Bootstrap's collapse functionality
     const toggleButton = document.querySelector('[data-bs-toggle="collapse"]');
     const targetId = toggleButton.getAttribute('data-bs-target');
     const targetElement = document.querySelector(targetId);

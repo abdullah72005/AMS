@@ -62,7 +62,7 @@ if (empty($mentors) && !isset($_POST['search'])) {
     <div class="row justify-content-center">
         <div class="col-md-10">
 
-            <!-- Current Mentorship Section -->
+            
             <?php if ($hasMentor): ?>
                 <div class="card mentor-card mb-4 border-success">
                     <div class="card-header bg-success text-white">
