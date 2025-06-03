@@ -101,7 +101,7 @@ Follow these instructions to set up AMS on your local machine.
    ```sql
    CREATE DATABASE ams_db;
    USE ams_db;
-   SOURCE database/schema.sql;
+   SOURCE tables.sql;
    ```
 3. **Create a `.env` file** at the project root containing:
 
